@@ -4,4 +4,6 @@
     <string name="app_name">MoldHold</string>
     <string name="scan">Scan</string>
     <string name="update">Update</string>
+    <string name="promptForUserInfo">This application requires access to your google calendar. Please enter your google account username and password below.</string>
+    <string name="ok">Ok</string>
 </resources>
