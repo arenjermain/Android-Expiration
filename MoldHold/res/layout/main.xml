@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
 		xmlns:android="http://schemas.android.com/apk/res/android"
-		android:orientation="vertical"
-		android:layout_height="fill_parent" android:layout_width="fill_parent">
+		android:layout_height="fill_parent" android:layout_width="fill_parent" android:orientation="vertical">
+    <LinearLayout android:layout_width="match_parent" android:id="@+id/linearLayout1" android:layout_height="wrap_content" android:orientation="vertical">
+        <ImageView android:layout_width="wrap_content" android:id="@+id/imageView1" android:src="@drawable/mold_fridge" android:layout_height="350dp" android:layout_gravity="center"></ImageView>
+    </LinearLayout>
 		<Button
 				android:layout_height="wrap_content"
 				android:id="@+id/btnScan"
-				android:text="@string/scan"
-				android:layout_width="fill_parent"></Button>
+				android:text="@string/scan" android:layout_width="match_parent"></Button>
 		<Button
 				android:layout_height="wrap_content"
 				android:layout_width="fill_parent"

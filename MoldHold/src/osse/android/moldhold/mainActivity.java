@@ -34,7 +34,7 @@ public class mainActivity extends Activity implements OnClickListener {
 	@Override
 	public void onClick(View v) {
 		switch(v.getId()) {
-			case R.id.btnScan:	// invoke zing scanner application
+			case R.id.btnScan:	// invoke zxing scanner application
 				Intent intent = new Intent("com.google.zxing.client.android.SCAN");
 				intent.setPackage("com.google.zxing.client.android");
 				intent.putExtra("SCAN_MODE", "PRODUCT_MODE");
