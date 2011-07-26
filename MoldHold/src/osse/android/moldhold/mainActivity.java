@@ -31,17 +31,14 @@ public class mainActivity extends Activity implements OnClickListener {
 	private static final int DATABASE_VERSION = 1;
 	private static final String DATABASE_CREATE = "create table groc (upc_id TEXT PRIMARY KEY NOT NULL, " + "Expiration INTEGER NOT NULL, " + "Description TEXT NOT NULL);";
 	private View myPopup;
-	private Context context = getApplicationContext();
-	private Cursor search = null;
-	private DataBaseHelper dbh = new DataBaseHelper(context);
+	private DataBaseHelper dbh;
 
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
-		LayoutInflater myInflator = LayoutInflater.from(this);
-		myPopup = myInflator.inflate(R.layout.data_popup, null);
+		dbh = new DataBaseHelper(this);
 		// connect buttons to xml file and set listeners
 		btnScan = (Button) findViewById(R.id.btnScan);
 		btnUpdate = (Button) findViewById(R.id.btnUpdate);
@@ -84,19 +81,23 @@ public class mainActivity extends Activity implements OnClickListener {
 	            String format = intent.getStringExtra("SCAN_RESULT_FORMAT");
 	            SQLiteDatabase data = dbh.getWritableDatabase(); //opens or creates database
 	            String my_query = "SELECT * FROM groc WHERE upc_id = " + ScanResults + ";";
-	            search = data.rawQuery(my_query, null); //the query of our database
+	            Cursor search = data.rawQuery(my_query, null); //the query of our database
 	            String product = null; //to get product description from database
 	            int expr = 0; //to store absolute expiration value form database search
-	            if (search == null){
+	            if (search.getCount() == 0){
 	            	MyAlert("Product Not Found!", "Please Enter Product Information:");
 	            }
 	            else {
 	            	int descripInt = search.getColumnIndex("Description");
 	            	int exprInt = search.getColumnIndex("Expiration");
-	            	if ((descripInt == -1) || (exprInt == -1))
+	            	
+	            	if ((descripInt == -1) || (exprInt == -1)) {
 	            		//figure this out because -1 means column don't exist
-	            	product = search.getString(descripInt);
-	            	expr = search.getInt(exprInt);
+	            	} else {
+	            		product = search.getString(descripInt);
+	            		expr = search.getInt(exprInt);
+	            	}
+	            	MyAlert("Product Found!", "Please Confirm Product Accuracy:");
 	            }
 	            // Handle successful scan
 	            // "contents" contains the barcode number
@@ -114,7 +115,12 @@ public class mainActivity extends Activity implements OnClickListener {
 	    Debug.stopMethodTracing();
 	}
 	
+	//the following is adapted from Fun Runner app by Charles Capps, thanks to 
+	//Charles for suggesting this method
 	public void MyAlert(String title, String msg){
+		
+		LayoutInflater myInflator = LayoutInflater.from(this);
+		myPopup = myInflator.inflate(R.layout.data_popup, null);
 		
 		AlertDialog.Builder lertBuild = new AlertDialog.Builder(this);
 		
@@ -131,10 +137,10 @@ public class mainActivity extends Activity implements OnClickListener {
 				dialog.dismiss();
 		}
 		});
-		
-		}
-			
-		}
+				
+		AlertDialog popup = lertBuild.create();
+		popup.setCancelable(true);
+		popup.show();
 	}
 	
 	//Adapted from Vogella.org database tutorial
