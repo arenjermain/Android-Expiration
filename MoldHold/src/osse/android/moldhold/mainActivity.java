@@ -1,8 +1,10 @@
 package osse.android.moldhold;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -28,6 +30,7 @@ public class mainActivity extends Activity implements OnClickListener {
 	private static final String DATABASE_NAME = "appdata";
 	private static final int DATABASE_VERSION = 1;
 	private static final String DATABASE_CREATE = "create table groc (upc_id TEXT PRIMARY KEY NOT NULL, " + "Expiration INTEGER NOT NULL, " + "Description TEXT NOT NULL);";
+	private View myPopup;
 	private Context context = getApplicationContext();
 	private Cursor search = null;
 	private DataBaseHelper dbh = new DataBaseHelper(context);
@@ -37,7 +40,8 @@ public class mainActivity extends Activity implements OnClickListener {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
-				
+		LayoutInflater myInflator = LayoutInflater.from(this);
+		myPopup = myInflator.inflate(R.layout.data_popup, null);
 		// connect buttons to xml file and set listeners
 		btnScan = (Button) findViewById(R.id.btnScan);
 		btnUpdate = (Button) findViewById(R.id.btnUpdate);
@@ -84,18 +88,7 @@ public class mainActivity extends Activity implements OnClickListener {
 	            String product = null; //to get product description from database
 	            int expr = 0; //to store absolute expiration value form database search
 	            if (search == null){
-	            	LayoutInflater inflater = (LayoutInflater)
-	                this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-	            	PopupWindow pw = new PopupWindow(inflater.inflate(R.layout.data_popup, null, false), 100, 100, true);
-	            	// The code below assumes that the root container has an id called 'main'
-	            	pw.showAtLocation(this.findViewById(R.id.btnScan), Gravity.CENTER, 0, 0); 
-	            	product = "Milk"; //magic string REPLACE WITH CORRECT VALUE
-	            	expr = 5; //magic number REPLACE WITH CORRECT VALUE
-	            	ContentValues content = new ContentValues();
-	            	content.put("_id", ScanResults);
-	            	content.put("Description", "Milk");
-	            	content.put("Expiration", 5); //magic number to represent number of days
-	            	data.insert("groc", null, content); //inserts our content value into database
+	            	MyAlert("Product Not Found!", "Please Enter Product Information:");
 	            }
 	            else {
 	            	int descripInt = search.getColumnIndex("Description");
@@ -119,6 +112,29 @@ public class mainActivity extends Activity implements OnClickListener {
 	    	Log.i("MOLDHOLD", "Caught exception", e);
 	    }
 	    Debug.stopMethodTracing();
+	}
+	
+	public void MyAlert(String title, String msg){
+		
+		AlertDialog.Builder lertBuild = new AlertDialog.Builder(this);
+		
+		lertBuild.setMessage(msg);
+		lertBuild.setTitle(title);
+		lertBuild.setView(myPopup);
+		
+		lertBuild.setPositiveButton("Enter", new DialogInterface.OnClickListener(){ public void onClick(DialogInterface dialog, int id) {
+				dialog.dismiss();
+		}
+		});
+		
+		lertBuild.setNegativeButton("Cancel", new DialogInterface.OnClickListener(){ public void onClick(DialogInterface dialog, int id) {
+				dialog.dismiss();
+		}
+		});
+		
+		}
+			
+		}
 	}
 	
 	//Adapted from Vogella.org database tutorial
