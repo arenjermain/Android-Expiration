@@ -1,6 +1,14 @@
-Author: Aren Edlund-Jermain
-Project: Android Grocery Expiration Date Estimation
+MoldHold
+An Android App by Aren Edlund-Jermain, Sarah Cathey, Michelle Carter
 
-Porject Description:
+Copyright © 2011 Aren Edlund-Jermain, Sarah Cathey, Michelle Carter
+Released under the Apache License (http://www.apache.org/licenses/LICENSE-2.0)
+
+Programmers: 
+   Aren Edlund-Jermain (aren.edlundjermain@gmail.com)
+   Sarah Cathey (sscathey@gmail.com)
+   Michelle Carter (mi.l.carter@gmail.com)
+
+Project Description:
 This Android mobile app will scan grocery products that have UPCs and put an
 estimated expiration date on the user's calendar. 
