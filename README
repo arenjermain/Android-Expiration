@@ -17,7 +17,8 @@ out for dinner because you forgot about that delicious chicken you have in the b
 that you forgot about!
 
 How to use it: 
-Initially, you will scan a grocery item and enter its name and the expiration date listed on the packaging into a database. Upon future scanning of that item, you will not be prompted to enter anymore information about the product as the phone 
+Initially, you will scan a grocery item and enter its name and the expiration date listed on the packaging into a database.
+Upon future scanning of that item, you will not be prompted to enter anymore information about the product as the phone 
 will automatically access the expiration date from the database. The application will create a calendar using the your 
 Google calendar account, specifically for the expiring for items. The application will calculate a date in the calendar 
 based on the shelf life of the food item and set an alarm on that date. You will have the ability to decide how far in 
