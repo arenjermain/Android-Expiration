@@ -95,8 +95,6 @@ public class mainActivity extends Activity implements OnClickListener {
 	            SQLiteDatabase data = dbh.getWritableDatabase(); //opens or creates database
 	            String my_query = "SELECT * FROM groc WHERE upc_id = " + ScanResults + ";";
 	            Cursor search = data.rawQuery(my_query, null); //the query of our database
-	            String product = null; //to get product description from database
-	            int expr = 0; //to store absolute expiration value form database search
 	            if (search.getCount() == 0){
 	            	MyAlert("Product Not Found!", "Please Enter Product Information:");
 	            	Date end = new GregorianCalendar(year, month, day).getTime();
@@ -119,8 +117,8 @@ public class mainActivity extends Activity implements OnClickListener {
 	            	if ((descripInt == -1) || (exprInt == -1)) {
 	            		//figure this out because -1 means column don't exist
 	            	} else {
-	            		product = search.getString(descripInt);
-	            		expr = search.getInt(exprInt);
+	            		description = search.getString(descripInt);
+	            		shelflife = search.getInt(exprInt);
 	            	}
 	            }
 	            // Handle successful scan
