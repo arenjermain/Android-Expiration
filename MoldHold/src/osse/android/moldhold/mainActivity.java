@@ -17,6 +17,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.PopupWindow;
 
 
@@ -25,6 +27,9 @@ import android.widget.PopupWindow;
 public class mainActivity extends Activity implements OnClickListener {
 	Button		btnScan;
 	Button		btnUpdate;
+	DatePicker	datePicker1;
+	EditText	editText1;
+	
 	
 	public static String ScanResults = null; //to make sure of initial value
 	private static final String DATABASE_NAME = "appdata";
@@ -118,6 +123,9 @@ public class mainActivity extends Activity implements OnClickListener {
 	//the following is adapted from Fun Runner app by Charles Capps, thanks to 
 	//Charles for suggesting this method
 	public void MyAlert(String title, String msg){
+		
+		datePicker1 = (DatePicker) findViewById(R.id.datePicker1);
+		editText1 = (EditText) findViewById(R.id.editText1);
 		
 		LayoutInflater myInflator = LayoutInflater.from(this);
 		myPopup = myInflator.inflate(R.layout.data_popup, null);
