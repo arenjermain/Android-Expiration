@@ -9,7 +9,7 @@ import android.widget.Button;
 
 
 // Application displays two buttons, scan and update (currently a stub). 
-// Clicking the "scan" button invokes the zing application. 
+// Clicking the "scan" button invokes the zxing application. 
 public class mainActivity extends Activity implements OnClickListener {
 	Button		btnScan;
 	Button		btnUpdate;
