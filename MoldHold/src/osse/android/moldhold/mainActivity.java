@@ -1,5 +1,9 @@
 package osse.android.moldhold;
 
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ContentValues;
@@ -37,7 +41,11 @@ public class mainActivity extends Activity implements OnClickListener {
 	private static final String DATABASE_CREATE = "create table groc (upc_id TEXT PRIMARY KEY NOT NULL, " + "Expiration INTEGER NOT NULL, " + "Description TEXT NOT NULL);";
 	private View myPopup;
 	private DataBaseHelper dbh;
-
+	private int day; //to get day from user datePicker1
+	private int month; //to get month from user datePicker1
+	private int year;  //to get year
+	private String description; 
+	private long shelflife; //the absolute shelf life of the product
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -91,6 +99,18 @@ public class mainActivity extends Activity implements OnClickListener {
 	            int expr = 0; //to store absolute expiration value form database search
 	            if (search.getCount() == 0){
 	            	MyAlert("Product Not Found!", "Please Enter Product Information:");
+	            	Date end = new GregorianCalendar(year, month, day).getTime();
+	            	Date today = new Date();
+	            	long diff = end.getTime() - today.getTime();
+	            	shelflife = (diff / (1000L*60L*60L*24L));
+	            	ContentValues values = new ContentValues();
+	            	values.put("upc", ScanResults);
+	            	values.put("Expiration", shelflife);
+	            	values.put("Description", description);
+	            	data.insert("groc", null, values);
+	            	//Intent new intent(this, calendarActivity.class);
+	            	//intent.putExtra();
+	            	//startactivityforresult(intent);
 	            }
 	            else {
 	            	int descripInt = search.getColumnIndex("Description");
@@ -102,7 +122,6 @@ public class mainActivity extends Activity implements OnClickListener {
 	            		product = search.getString(descripInt);
 	            		expr = search.getInt(exprInt);
 	            	}
-	            	MyAlert("Product Found!", "Please Confirm Product Accuracy:");
 	            }
 	            // Handle successful scan
 	            // "contents" contains the barcode number
@@ -137,7 +156,11 @@ public class mainActivity extends Activity implements OnClickListener {
 		lertBuild.setView(myPopup);
 		
 		lertBuild.setPositiveButton("Enter", new DialogInterface.OnClickListener(){ public void onClick(DialogInterface dialog, int id) {
-				dialog.dismiss();
+			day = datePicker1.getDayOfMonth();
+			month = datePicker1.getMonth();
+			year = datePicker1.getYear();
+			description = editText1.getText().toString();
+			dialog.dismiss();
 		}
 		});
 		
