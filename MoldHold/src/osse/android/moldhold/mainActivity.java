@@ -1,5 +1,8 @@
 package osse.android.moldhold;
 
+// Copyright (c) 2010 Michelle Carter, Sarah Cathey, Aren Edlund-Jermain
+// See COPYING file for license details. 
+
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -25,6 +28,7 @@ public class mainActivity extends Activity implements OnClickListener {
 
 	private Button					btnScan;
 	private Button					btnUpdate;
+	private Button					btnQuit;
 	
 
 	
@@ -49,18 +53,6 @@ public class mainActivity extends Activity implements OnClickListener {
 	}
 	
 	
-	@Override
-	protected void onResume() {
-		super.onResume();
-		setContentView(R.layout.main);
-	
-		// connect buttons to xml file and set listeners
-		btnScan = (Button) findViewById(R.id.btnScan);
-		btnUpdate = (Button) findViewById(R.id.btnUpdate);
-		btnScan.setOnClickListener(this);
-		btnUpdate.setOnClickListener(this);
-	}
-	
 	
 	
 	// Single onClick handler, uses switch statement to determine which
@@ -77,6 +69,8 @@ public class mainActivity extends Activity implements OnClickListener {
 			case R.id.btnUpdate:
 				// STUB
 				break;
+			case R.id.btnQuit:
+				finish();
 		}
     }
 
@@ -106,6 +100,9 @@ public class mainActivity extends Activity implements OnClickListener {
 	    		// connect buttons to xml file and set listeners
 	    		btnScan = (Button) findViewById(R.id.btnScan);
 	    		btnUpdate = (Button) findViewById(R.id.btnUpdate);
+	    		btnQuit = (Button) findViewById(R.id.btnQuit);
+	    		
+	    		btnQuit.setOnClickListener(this);
 	    		btnScan.setOnClickListener(this);
 	    		btnUpdate.setOnClickListener(this);
 	    	}

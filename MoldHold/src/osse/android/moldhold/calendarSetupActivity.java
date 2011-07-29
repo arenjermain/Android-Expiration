@@ -1,7 +1,7 @@
 package osse.android.moldhold;
 
 // Copyright (c) 2010 Michelle Carter, Sarah Cathey, Aren Edlund-Jermain
-// See COPYING file 
+// See COPYING file for license details. 
 
 import java.io.IOException;
 import java.util.Date;
@@ -24,6 +24,7 @@ import com.google.api.client.sample.calendar.android.model.CalendarClient;
 import com.google.api.client.sample.calendar.android.model.CalendarEntry;
 import com.google.api.client.sample.calendar.android.model.CalendarFeed;
 import com.google.api.client.sample.calendar.android.model.CalendarUrl;
+import com.google.api.client.sample.calendar.android.model.Link;
 import com.google.api.client.util.DateTime;
 import com.google.common.collect.Lists;
 
@@ -50,13 +51,17 @@ public class calendarSetupActivity extends Activity {
 	
 	CalendarClient 						client;
 	private final List<CalendarEntry> 	calendars = Lists.newArrayList();
-	private final HttpTransport 		transport = AndroidHttp.newCompatibleTransport();
+	
+
+	private final HttpTransport 		transport = 
+			AndroidHttp.newCompatibleTransport();
 	
 	private static final String		TAG = "calSetup";
 	private static final String 	PREF = "MoldHoldPrefs";
 	private static final String		CALENDAR_NAME = "MoldHold Expiration Dates";
 	private static final String 	AUTH_TOKEN_TYPE = "cl"; // for calendar
 	private static final int 		REQUEST_AUTHENTICATE = 0;
+	private static final int		REQUEST_CALENDAR = 1;
 	
 	
 	@Override
@@ -71,11 +76,10 @@ public class calendarSetupActivity extends Activity {
 		gsessionid = settings.getString("GSESSION_ID", null);
 		
 		final MethodOverride override = new MethodOverride(); // needed for PATCH
-		Log.d(TAG, "createing new CalendarClient...");
 		client = new CalendarClient(transport.createRequestFactory(
 				new HttpRequestInitializer() {
 	     
-			public void initialize(HttpRequest request) {
+			public void initialize(HttpRequest request) {	// when does this get called???
 				GoogleHeaders headers = new GoogleHeaders();
 				headers.setApplicationName("MoldHold/1.0");
 				headers.gdataVersion = "2";
@@ -91,6 +95,7 @@ public class calendarSetupActivity extends Activity {
 						override.intercept(request);
 					}
 				};
+				// redefining unsuccessfulResponseHandler
 				request.unsuccessfulResponseHandler = 
 					new HttpUnsuccessfulResponseHandler() {
 	
@@ -119,10 +124,15 @@ public class calendarSetupActivity extends Activity {
 			} // end public void initialize
 		}));  // end new calendarClient
 	    gotAccount();
-	    if (!calendarExists) {
-	    	Log.d(TAG, "creating new calendar...");
-	    	//createNewCalendar();
-	    }
+	    //executeRefreshCalendars();
+
+		// This seems to be happening at wrong time...
+	    // make thread wait??
+		if (!checkCalendarExists()) {
+			Log.d(TAG, "creating new calendar...");
+			//createNewCalendar();
+		}
+	    
 	    finish(); 	// return to mainActivity
 	} 
 	
@@ -130,6 +140,7 @@ public class calendarSetupActivity extends Activity {
 	
 	
 	private void gotAccount() {
+		Log.d(TAG, "in gotAccount()");
 		Account account = accountManager.getAccountByName(accountName);
 		if (account != null) {
 			// invalid token
@@ -153,7 +164,7 @@ public class calendarSetupActivity extends Activity {
 											AccountManager.KEY_AUTHTOKEN)) {
 										setAuthToken(bundle.getString(
 												AccountManager.KEY_AUTHTOKEN));
-										calendarExists = executeRefreshCalendars();
+										executeRefreshCalendars();
 									}
 								} catch (Exception e) {
 									handleException(e);
@@ -162,7 +173,7 @@ public class calendarSetupActivity extends Activity {
 						}, null);
 			// valid token
 			} else 					
-				calendarExists = executeRefreshCalendars();
+				executeRefreshCalendars();
 		} else			// if account is null
 			chooseAccount();
 	}
@@ -183,7 +194,7 @@ public class calendarSetupActivity extends Activity {
 							bundle = future.getResult();
 							setAccountName(bundle.getString(AccountManager.KEY_ACCOUNT_NAME));
 							setAuthToken(bundle.getString(AccountManager.KEY_AUTHTOKEN));
-							calendarExists = executeRefreshCalendars();
+							executeRefreshCalendars();
 						} catch (OperationCanceledException e) {
 							// user canceled
 						} catch (AuthenticatorException e) {
@@ -237,17 +248,15 @@ public class calendarSetupActivity extends Activity {
 	  
 	
 	
-	// Refreshes calendars and checks to see if MoldHold calendar exits.
-	// Returns true if found, else false. 
-	private boolean executeRefreshCalendars() {
-	    String 		calendarName;
-	    boolean 	found = false;
-	    
+	// Updates class variable "calendars" to contain all calendars currently 
+	// found in own calendars feed. 
+	private void executeRefreshCalendars() {
+		Log.d(TAG, "executing refreshCalendars");
 	    List<CalendarEntry> calendars = this.calendars;
 	    calendars.clear();
 	    try {
-	    	CalendarUrl url = CalendarUrl.forAllCalendarsFeed();
-	    	// add all existing calendars to list
+	    	CalendarUrl url = CalendarUrl.forOwnCalendarsFeed();
+	    	// add all existing owned calendars to list
 	    	while (true) {
 	    		CalendarFeed feed = client.executeGetCalendarFeed(url);
 	    		if (feed.calendars != null) 
@@ -256,28 +265,37 @@ public class calendarSetupActivity extends Activity {
 	    		if (nextLink == null) 
 	    			break;
 	    	} 
-	    	
-	    	// iterate through list and make sure that moldHold calendar
-	    	// exists
-	    	int numCalendars = calendars.size();
-	    	for (int i = 0; i < numCalendars; i++) {
-	    		calendarName = calendars.get(i).title;
-	    		Log.d(TAG, "calendar title: " + calendarName);
-	    		if (calendarName.equals(CALENDAR_NAME))
-	    			found = true;
-	    	}
 	    } catch (IOException e) {
 	    	handleException(e);
 	    	calendars.clear();
-	    }
-	    
-	    return found;
+	    } 
 	 }
 	
 	
 	
-	// Create MoldHold calendar
+	// Check to see if MoldHold calendar exits in list of calendars 
+	// retrieved from own calendars feed. 
+	private boolean checkCalendarExists() {
+		String 		calendarName;
+		boolean		found = false;
+		
+		int numCalendars = calendars.size();
+		Log.d(TAG, "size of numCalendars: " + numCalendars);
+    	for (int i = 0; i < numCalendars; i++) {
+    		calendarName = calendars.get(i).title;
+    		Log.d(TAG, "calendar title: " + calendarName);
+    		//Log.d(TAG, "id: " + calendars.get(i).uid);
+    		if (calendarName.equals(CALENDAR_NAME))
+    			found = true;
+    	}
+    	return found;
+	}
+	
+	
+	
+	// Creates MoldHold calendar
 	private void createNewCalendar() {
+		// https://www.google.com/calendar/feeds/default/owncalendars/full
         CalendarUrl url = CalendarUrl.forOwnCalendarsFeed();
         CalendarEntry calendar = new CalendarEntry();
         calendar.title = CALENDAR_NAME;
@@ -288,7 +306,8 @@ public class calendarSetupActivity extends Activity {
         } catch (IOException e) {
           handleException(e);
         }
-        executeRefreshCalendars(); // disregard return value
+        executeRefreshCalendars();
+        // add this new calendar's id to preferences
 	}
 	
 	

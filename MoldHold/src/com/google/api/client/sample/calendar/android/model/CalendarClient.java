@@ -97,10 +97,9 @@ public class CalendarClient {
   
   // ADDED
   
-  public boolean executeInsertEventEntry(CalendarEntry entry, CalendarUrl url)
-  		throws IOException {
-	  
-	  return true;
+  public EventEntry executeInsertEventEntry(EventEntry entry, CalendarUrl url)
+  		throws IOException {  
+	  return (EventEntry) executeInsert(entry, url);
   }
   
   

@@ -22,4 +22,5 @@
 				android:textStyle="bold"
 				android:layout_width="200dp"
 				android:layout_gravity="center"></Button>
+		<Button android:layout_height="wrap_content" android:id="@+id/btnQuit" android:gravity="center" android:text="@string/Quit" android:textSize="20dp" android:layout_gravity="center" android:layout_width="200dp"></Button>
 </LinearLayout>

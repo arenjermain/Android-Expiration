@@ -35,6 +35,9 @@ public class Entry implements Cloneable {
 
   @Key("link")
   public List<Link> links;
+  
+ // @Key
+ // public String uid;
 
   @Override
   protected Entry clone() {
