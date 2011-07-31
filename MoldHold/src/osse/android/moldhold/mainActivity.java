@@ -4,6 +4,9 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
+// Copyright (c) 2010 Michelle Carter, Sarah Cathey, Aren Edlund-Jermain
+// See COPYING file for license details. 
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ContentValues;
@@ -29,13 +32,24 @@ import android.widget.PopupWindow;
 
 // Application displays two buttons, scan and update (currently a stub). 
 // Clicking the "scan" button invokes the zxing application. 
+//
+// This application uses SharedPreferences which contains the following keys:
+//		"AUTH_TOKEN"
+//		"GSESSION_ID"
+//		"ACCOUNT_NAME"
+//
 public class mainActivity extends Activity implements OnClickListener {
-	Button		btnScan;
-	Button		btnUpdate;
 	DatePicker	datePicker1;
 	EditText	editText1;
 	
+	private static final String 	TAG = "MoldHold";
+	private static final int		REQUEST_SETUP = 0;
+	private static final int		REQUEST_ZXING = 1;
 
+
+	private Button					btnScan;
+	private Button					btnUpdate;
+	private Button					btnQuit;
 	
 	public static String ScanResults = null; //to make sure of initial value
 	private static final String DATABASE_NAME = "appdata";
@@ -55,9 +69,10 @@ public class mainActivity extends Activity implements OnClickListener {
 		
 		// Verify login info is stored in preferences (if not add) and
 		// check that calendar exists (if not create)
+		Log.d(TAG, "initiating intent for calendarSetupActivity...");
 		Intent intent = new Intent(this, calendarSetupActivity.class);
-		startActivity(intent);
-		
+		startActivityForResult(intent, REQUEST_SETUP);
+		/*
 		setContentView(R.layout.main);
 		dbh = new DataBaseHelper(this);
 		// connect buttons to xml file and set listeners
@@ -65,9 +80,10 @@ public class mainActivity extends Activity implements OnClickListener {
 		btnUpdate = (Button) findViewById(R.id.btnUpdate);
 		btnScan.setOnClickListener(this);
 		btnUpdate.setOnClickListener(this);
-		
+		*/
 	}
-
+	
+	
 	
 	
 	// Single onClick handler, uses switch statement to determine which
@@ -79,11 +95,13 @@ public class mainActivity extends Activity implements OnClickListener {
 				Intent intent = new Intent("com.google.zxing.client.android.SCAN");
 				intent.setPackage("com.google.zxing.client.android");
 				intent.putExtra("SCAN_MODE", "PRODUCT_MODE");
-				startActivityForResult(intent, 0);
+				startActivityForResult(intent, REQUEST_ZXING);
 				break;
 			case R.id.btnUpdate:
 				// STUB
 				break;
+			case R.id.btnQuit:
+				finish();
 		}
     }
 
@@ -97,7 +115,7 @@ public class mainActivity extends Activity implements OnClickListener {
 		// call super??
 		Debug.startMethodTracing("mylog");
 	    try {
-	    if (requestCode == 0) {
+	    if (requestCode == REQUEST_ZXING) {
 	        if (resultCode == RESULT_OK) {
 	        	ScanResults = intent.getStringExtra("SCAN_RESULT");
 	            String format = intent.getStringExtra("SCAN_RESULT_FORMAT");
@@ -137,8 +155,22 @@ public class mainActivity extends Activity implements OnClickListener {
 	            // startActivity(intent);
 	            // activate database activity
 	        } else if (resultCode == RESULT_CANCELED) {
-	            // Handle cancel
+	            // Handle cancel...
 	        }
+	    } else if (requestCode == REQUEST_SETUP) {
+	    	if (resultCode == RESULT_OK) {
+	    		// no extras to retreive...??
+	    		setContentView(R.layout.main);
+	    		
+	    		// connect buttons to xml file and set listeners
+	    		btnScan = (Button) findViewById(R.id.btnScan);
+	    		btnUpdate = (Button) findViewById(R.id.btnUpdate);
+	    		btnQuit = (Button) findViewById(R.id.btnQuit);
+	    		
+	    		btnQuit.setOnClickListener(this);
+	    		btnScan.setOnClickListener(this);
+	    		btnUpdate.setOnClickListener(this);
+	    	}
 	    }
 	    } catch (Exception e) {
 	    	Log.i("MOLDHOLD", "Caught exception", e);
@@ -203,6 +235,7 @@ public class mainActivity extends Activity implements OnClickListener {
 			onCreate(db);
 		}
 		
+	    } 
 	}
 	
 	
