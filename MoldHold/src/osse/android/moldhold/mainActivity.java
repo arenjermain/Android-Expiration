@@ -79,7 +79,7 @@ public class mainActivity extends Activity implements OnClickListener {
 				Intent intent = new Intent("com.google.zxing.client.android.SCAN");
 				intent.setPackage("com.google.zxing.client.android");
 				intent.putExtra("SCAN_MODE", "PRODUCT_MODE");
-				startActivityForResult(intent, ZXING);
+				startActivityForResult(intent, 0);
 				break;
 			case R.id.btnUpdate:
 				// STUB
