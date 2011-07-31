@@ -26,14 +26,16 @@ import android.widget.EditText;
 import android.widget.PopupWindow;
 
 
+
 // Application displays two buttons, scan and update (currently a stub). 
-// Clicking the "scan" button invokes the zing application. 
+// Clicking the "scan" button invokes the zxing application. 
 public class mainActivity extends Activity implements OnClickListener {
 	Button		btnScan;
 	Button		btnUpdate;
 	DatePicker	datePicker1;
 	EditText	editText1;
 	
+
 	
 	public static String ScanResults = null; //to make sure of initial value
 	private static final String DATABASE_NAME = "appdata";
@@ -50,6 +52,12 @@ public class mainActivity extends Activity implements OnClickListener {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		// Verify login info is stored in preferences (if not add) and
+		// check that calendar exists (if not create)
+		Intent intent = new Intent(this, calendarSetupActivity.class);
+		startActivity(intent);
+		
 		setContentView(R.layout.main);
 		dbh = new DataBaseHelper(this);
 		// connect buttons to xml file and set listeners
@@ -57,8 +65,9 @@ public class mainActivity extends Activity implements OnClickListener {
 		btnUpdate = (Button) findViewById(R.id.btnUpdate);
 		btnScan.setOnClickListener(this);
 		btnUpdate.setOnClickListener(this);
+		
 	}
-	
+
 	
 	
 	// Single onClick handler, uses switch statement to determine which
@@ -70,7 +79,7 @@ public class mainActivity extends Activity implements OnClickListener {
 				Intent intent = new Intent("com.google.zxing.client.android.SCAN");
 				intent.setPackage("com.google.zxing.client.android");
 				intent.putExtra("SCAN_MODE", "PRODUCT_MODE");
-				startActivityForResult(intent, 0);
+				startActivityForResult(intent, ZXING);
 				break;
 			case R.id.btnUpdate:
 				// STUB
@@ -78,7 +87,7 @@ public class mainActivity extends Activity implements OnClickListener {
 		}
     }
 
-	
+
 	
 	@Override
 	//make popupwindow into alert dialog with inflator then you can get content
@@ -124,9 +133,9 @@ public class mainActivity extends Activity implements OnClickListener {
 	            // Handle successful scan
 	            // "contents" contains the barcode number
 	            
-	            
-	            
-	            // Will do...
+	            // Intent intent = new Intent(this, <db??>.class);
+	            // startActivity(intent);
+	            // activate database activity
 	        } else if (resultCode == RESULT_CANCELED) {
 	            // Handle cancel
 	        }
@@ -195,4 +204,7 @@ public class mainActivity extends Activity implements OnClickListener {
 		}
 		
 	}
+	
+	
+	
 }
