@@ -1,3 +1,7 @@
+/*
+Copyright © 2011 Sarah Cathey, Michelle Carter, Aren Edlund-Jermain
+Please see COPYING file in the distribution for license terms.
+*/
 package osse.android.moldhold;
 
 import android.app.Activity;
@@ -9,7 +13,7 @@ import android.widget.Button;
 
 
 // Application displays two buttons, scan and update (currently a stub). 
-// Clicking the "scan" button invokes the zing application. 
+// Clicking the "scan" button invokes the zxing application. 
 public class mainActivity extends Activity implements OnClickListener {
 	Button		btnScan;
 	Button		btnUpdate;
