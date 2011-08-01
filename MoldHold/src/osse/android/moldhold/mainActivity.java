@@ -237,7 +237,3 @@ public class mainActivity extends Activity implements OnClickListener {
 		
 	    } 
 	}
-	
-	
-	
-}
