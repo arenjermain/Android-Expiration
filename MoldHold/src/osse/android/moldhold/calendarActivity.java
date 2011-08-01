@@ -1,7 +1,10 @@
 package osse.android.moldhold;
 
-//Copyright (c) 2010 Michelle Carter, Sarah Cathey, Aren Edlund-Jermain
-//See COPYING file for license details.
+/*
+Copyright © 2011 Sarah Cathey, Michelle Carter, Aren Edlund-Jermain
+This project is protected under the Apache license. 
+Please see COPYING file in the distribution for license terms.
+*/
 
 import java.util.Calendar;
 
@@ -121,5 +124,20 @@ public class calendarActivity extends Activity {
     	// need: https://www.google.com/calendar/feeds/<calID>/owncalendars/full
     	CalendarUrl url = CalendarUrl.forEventFeed(calendarID, "private", 
     			"full");
+    	/*CalendarService service = new CalendarService("MyTEst");
+        service.setUserCredentials("Username", "Password");
+        EventEntry entry = new EventEntry();
+
+        // Set the title and content of the entry.
+        entry.Title.Text = "title";
+        entry.Content.Content = "test";
+
+        When eventTime = new When(DateTime.now, DateTime.now.AddDays(2));
+        entry.Times.Add(eventTime);
+
+        Uri postUri = new Uri("http://www.google.com/calendar/feeds/default/private/full");
+
+        // Send the request and receive the response
+        AtomEntry insertedEntry = service.Insert(postUri, entry);*/
     }
 }

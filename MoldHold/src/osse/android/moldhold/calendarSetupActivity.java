@@ -1,7 +1,10 @@
 package osse.android.moldhold;
 
-// Copyright (c) 2010 Michelle Carter, Sarah Cathey, Aren Edlund-Jermain
-// See COPYING file for license details. 
+/*
+Copyright © 2011 Sarah Cathey, Michelle Carter, Aren Edlund-Jermain
+This project is protected under the Apache license. 
+Please see COPYING file in the distribution for license terms.
+*/
 
 import java.io.IOException;
 import java.util.Date;
@@ -124,13 +127,13 @@ public class calendarSetupActivity extends Activity {
 			} // end public void initialize
 		}));  // end new calendarClient
 	    gotAccount();
-	    //executeRefreshCalendars();
+	   // Jy67079@executeRefreshCalendars();
 
 		// This seems to be happening at wrong time...
 	    // make thread wait??
 		if (!checkCalendarExists()) {
 			Log.d(TAG, "creating new calendar...");
-			//createNewCalendar();
+			createNewCalendar();
 		}
 	    
 	    finish(); 	// return to mainActivity
@@ -172,10 +175,10 @@ public class calendarSetupActivity extends Activity {
 							}
 						}, null);
 			// valid token
-			} else 					
-				executeRefreshCalendars();
+			/*} else 					
+				executeRefreshCalendars();*/
 		} else			// if account is null
-			chooseAccount();
+			chooseAccount();}
 	}
 	
 	
@@ -306,7 +309,7 @@ public class calendarSetupActivity extends Activity {
         } catch (IOException e) {
           handleException(e);
         }
-        executeRefreshCalendars();
+        //executeRefreshCalendars();
         // add this new calendar's id to preferences
 	}
 	
