@@ -1,9 +1,7 @@
 package osse.android.moldhold;
 
-import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ContentValues;
@@ -16,14 +14,12 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Bundle;
 import android.os.Debug;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.PopupWindow;
 
 
 // Application displays two buttons, scan and update (currently a stub). 
@@ -91,12 +87,10 @@ public class mainActivity extends Activity implements OnClickListener {
 	    if (requestCode == 0) {
 	        if (resultCode == RESULT_OK) {
 	        	ScanResults = intent.getStringExtra("SCAN_RESULT");
-	            String format = intent.getStringExtra("SCAN_RESULT_FORMAT");
+	            //String format = intent.getStringExtra("SCAN_RESULT_FORMAT");
 	            SQLiteDatabase data = dbh.getWritableDatabase(); //opens or creates database
 	            String my_query = "SELECT * FROM groc WHERE upc_id = " + ScanResults + ";";
 	            Cursor search = data.rawQuery(my_query, null); //the query of our database
-	            String product = null; //to get product description from database
-	            int expr = 0; //to store absolute expiration value form database search
 	            if (search.getCount() == 0){
 	            	MyAlert("Product Not Found!", "Please Enter Product Information:");
 	            	Date end = new GregorianCalendar(year, month, day).getTime();
@@ -119,8 +113,8 @@ public class mainActivity extends Activity implements OnClickListener {
 	            	if ((descripInt == -1) || (exprInt == -1)) {
 	            		//figure this out because -1 means column don't exist
 	            	} else {
-	            		product = search.getString(descripInt);
-	            		expr = search.getInt(exprInt);
+	            		description = search.getString(descripInt);
+	            		shelflife = search.getInt(exprInt);
 	            	}
 	            }
 	            // Handle successful scan
@@ -179,7 +173,6 @@ public class mainActivity extends Activity implements OnClickListener {
 
 		public DataBaseHelper(Context context) {
 			super(context, DATABASE_NAME, null, DATABASE_VERSION);
-			// TODO Auto-generated constructor stub
 		}
 
 		@Override
