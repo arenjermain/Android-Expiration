@@ -114,7 +114,6 @@ public class mainActivity extends Activity implements OnClickListener {
 	            		description = search.getString(descripInt);
 	            		shelflife = search.getInt(exprInt);
 	            	}
-	            	MyAlert("Product Found!", "Information Correct?");
 	            	data.close();
 	            }
 	            // Handle successful scan
