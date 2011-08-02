@@ -1,6 +1,38 @@
-Author: Aren Edlund-Jermain
-Project: Android Grocery Expiration Date Estimation
+MoldHold
+An Android App by Aren Edlund-Jermain, Sarah Cathey, Michelle Carter
 
-Porject Description:
-This Android mobile app will scan grocery products that have UPCs and put an
-estimated expiration date on the user's calendar. 
+Copyright © 2011 Aren Edlund-Jermain, Sarah Cathey, Michelle Carter
+Released under the Apache License (http://www.apache.org/licenses/LICENSE-2.0)
+
+Programmers: 
+   Aren Edlund-Jermain (aren.edlundjermain@gmail.com)
+   Sarah Cathey (sscathey@gmail.com)
+   Michelle Carter (mi.l.carter@gmail.com)
+
+What does it do?:
+This Android mobile application will scan grocery products that have UPCs and set an alarm in your phone to notify you 
+before your food expires! The application will help keep you from forgetting about food in your fridge. Instead of going 
+out for dinner because you forgot about that delicious chicken you have in the back of the fridge, you can save time and
+ money by eating in. MoldHold will save you extra trips to the grocery store to replace items hidden away in the fridge 
+that you forgot about!
+
+How to use it: 
+Initially, you will scan a grocery item and enter its name and the expiration date listed on the packaging into a database.
+Upon future scanning of that item, you will not be prompted to enter anymore information about the product as the phone 
+will automatically access the expiration date from the database. The application will create a calendar using the your 
+Google calendar account, specifically for the expiring for items. The application will calculate a date in the calendar 
+based on the shelf life of the food item and set an alarm on that date. You will have the ability to decide how far in 
+advance you want to be notified before your food expires.
+
+Build Instructions:
+Download application to your phone and allow access to Google Calendar.
+
+Credit for Code used:
+We incorporated the Zxing code for a barcode scanner with our project. The code for this can be found at:     
+       http://code.google.com/p/zxing/
+The code is protected under the Apache license. Thanks to the Zxing team!
+
+We also integrated some of Yaniv Inbar's code for accessing the Google calendar in his project 
+"calendar-v2-atom-android-sample". This code can be found at: 
+       http://code.google.com/p/google-api-java-client/source/browse/calendar-v2-atom-android-sample/?repo=samples 
+Thanks to Yaniv Inbar with his help navigating the Google API!

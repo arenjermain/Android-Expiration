@@ -14,9 +14,6 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 
 
-
-// Application displays two buttons, scan and update (currently a stub). 
-// Clicking the "scan" button invokes the zxing application. 
 // Clicking the "scan" button invokes the zxing application. 
 //
 // This application uses SharedPreferences which contains the following keys:
@@ -24,6 +21,7 @@ import android.widget.Button;
 //		"GSESSION_ID"
 //		"ACCOUNT_NAME"
 //
+
 public class mainActivity extends Activity implements OnClickListener {
 	private static final String 	TAG = "MoldHold";
 	private static final int		REQUEST_SETUP = 0;
@@ -32,6 +30,7 @@ public class mainActivity extends Activity implements OnClickListener {
 	private Button					btnScan;
 	private Button					btnUpdate;
 	private Button					btnQuit;
+
 	
 
 	
@@ -45,6 +44,9 @@ public class mainActivity extends Activity implements OnClickListener {
 		Intent intent = new Intent(this, calendarSetupActivity.class);
 		startActivityForResult(intent, REQUEST_SETUP);
 		/*
+		Intent intent = new Intent(this, calendarSetupActivity.class);
+		startActivity(intent);
+		
 		setContentView(R.layout.main);
 		
 		// connect buttons to xml file and set listeners
@@ -52,10 +54,8 @@ public class mainActivity extends Activity implements OnClickListener {
 		btnUpdate = (Button) findViewById(R.id.btnUpdate);
 		btnScan.setOnClickListener(this);
 		btnUpdate.setOnClickListener(this);
+
 		*/
-	}
-	
-	
 	
 	
 	// Single onClick handler, uses switch statement to determine which
@@ -82,6 +82,7 @@ public class mainActivity extends Activity implements OnClickListener {
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent intent) {
 		// call super??
+
 	    if (requestCode == REQUEST_ZXING) {
 	        if (resultCode == RESULT_OK) {
 	            String contents = intent.getStringExtra("SCAN_RESULT");

@@ -23,12 +23,9 @@ import com.google.api.client.util.Key;
 public class CalendarUrl extends GoogleUrl {
 
   public static final String ROOT_URL = "https://www.google.com/calendar/feeds";
-  //"https://www.google.com/calendar/feeds/<id>/owncalendars/full
 
   @Key("max-results")
-  // public Integer maxResults;
-  public Integer maxResults = 1000000; // no avoid infinite loop when 
-  // iterating through calendar feed results
+  public Integer maxResults;
 
   public CalendarUrl(String url) {
     super(url);

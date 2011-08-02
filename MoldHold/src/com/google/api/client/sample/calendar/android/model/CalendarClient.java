@@ -52,8 +52,8 @@ public class CalendarClient {
   }
 
   public void executeDelete(Entry entry) throws IOException {
-    HttpRequest request = requestFactory.buildDeleteRequest(
-    		new GenericUrl(entry.getEditLink()));
+
+    HttpRequest request = requestFactory.buildDeleteRequest(new GenericUrl(entry.getEditLink()));
     request.execute().ignore();
   }
 
@@ -94,13 +94,4 @@ public class CalendarClient {
   public CalendarFeed executeGetCalendarFeed(CalendarUrl url) throws IOException {
     return executeGetFeed(url, CalendarFeed.class);
   }
-  
-  // ADDED
-  
-  public EventEntry executeInsertEventEntry(EventEntry entry, CalendarUrl url)
-  		throws IOException {  
-	  return (EventEntry) executeInsert(entry, url);
-  }
-  
-  
 }
