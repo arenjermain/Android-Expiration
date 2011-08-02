@@ -20,6 +20,7 @@ import android.widget.Button;
 //		"AUTH_TOKEN"
 //		"GSESSION_ID"
 //		"ACCOUNT_NAME"
+//		"CALENDAR_ID"
 //
 public class mainActivity extends Activity implements OnClickListener {
 	private static final String 	TAG = "MoldHold";
@@ -94,6 +95,7 @@ public class mainActivity extends Activity implements OnClickListener {
 	        }
 	    } else if (requestCode == REQUEST_SETUP) {
 	    	if (resultCode == RESULT_OK) {
+	    		Log.d(TAG, "in onActivityResult, requestSetup");
 	    		// no extras to retreive...??
 	    		setContentView(R.layout.main);
 	    		
@@ -105,6 +107,9 @@ public class mainActivity extends Activity implements OnClickListener {
 	    		btnQuit.setOnClickListener(this);
 	    		btnScan.setOnClickListener(this);
 	    		btnUpdate.setOnClickListener(this);
+	    	} else if (resultCode == RESULT_CANCELED) {
+	    		// Handle cancel...
+	    		Log.d(TAG, "result cancelled...");
 	    	}
 	    }
 	}

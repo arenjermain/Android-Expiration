@@ -6,6 +6,7 @@ package osse.android.moldhold;
 import java.util.Calendar;
 
 import com.google.api.client.sample.calendar.android.model.CalendarUrl;
+import com.google.api.client.sample.calendar.android.model.EventEntry;
 
 import android.app.Activity;
 import android.app.DatePickerDialog;
@@ -119,7 +120,24 @@ public class calendarActivity extends Activity {
     private void addNewEvent() {
     	
     	// need: https://www.google.com/calendar/feeds/<calID>/owncalendars/full
+    	
     	CalendarUrl url = CalendarUrl.forEventFeed(calendarID, "private", 
-    			"full");
+    		"full");
+    	
+        EventEntry event = newEvent();
+        EventEntry result = client.executeInsertEvent(event, url);
     }
+    
+    
+    
+    //
+    private EventEntry newEvent() {
+        EventEntry event = new EventEntry();
+        event.title = "Your " + productName + " expires in 3 days";
+        When when = new When();
+        when.startTime = new DateTime(new Date());
+        event.when = when;
+        // add alarm
+        return event;
+      }
 }
