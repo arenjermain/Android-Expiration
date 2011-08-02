@@ -1,12 +1,11 @@
 package osse.android.moldhold;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-
 // Copyright (c) 2010 Michelle Carter, Sarah Cathey, Aren Edlund-Jermain
 // See COPYING file for license details. 
 
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ContentValues;
@@ -19,14 +18,12 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Bundle;
 import android.os.Debug;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.PopupWindow;
 
 
 
@@ -38,10 +35,7 @@ import android.widget.PopupWindow;
 //		"GSESSION_ID"
 //		"ACCOUNT_NAME"
 //
-public class mainActivity extends Activity implements OnClickListener {
-	DatePicker	datePicker1;
-	EditText	editText1;
-	
+public class mainActivity extends Activity implements OnClickListener {		
 	private static final String 	TAG = "MoldHold";
 	private static final int		REQUEST_SETUP = 0;
 	private static final int		REQUEST_ZXING = 1;
@@ -52,9 +46,6 @@ public class mainActivity extends Activity implements OnClickListener {
 	private Button					btnQuit;
 	
 	public static String ScanResults = null; //to make sure of initial value
-	private static final String DATABASE_NAME = "appdata";
-	private static final int DATABASE_VERSION = 1;
-	private static final String DATABASE_CREATE = "create table groc (upc_id TEXT PRIMARY KEY NOT NULL, " + "Expiration INTEGER NOT NULL, " + "Description TEXT NOT NULL);";
 	private View myPopup;
 	private DataBaseHelper dbh;
 	private int day; //to get day from user datePicker1
@@ -91,7 +82,7 @@ public class mainActivity extends Activity implements OnClickListener {
 	@Override
 	public void onClick(View v) {
 		switch(v.getId()) {
-			case R.id.btnScan:	// invoke zing scanner application
+			case R.id.btnScan:	// invoke zxing scanner application
 				Intent intent = new Intent("com.google.zxing.client.android.SCAN");
 				intent.setPackage("com.google.zxing.client.android");
 				intent.putExtra("SCAN_MODE", "PRODUCT_MODE");
@@ -118,21 +109,23 @@ public class mainActivity extends Activity implements OnClickListener {
 	    if (requestCode == REQUEST_ZXING) {
 	        if (resultCode == RESULT_OK) {
 	        	ScanResults = intent.getStringExtra("SCAN_RESULT");
-	            String format = intent.getStringExtra("SCAN_RESULT_FORMAT");
+	            //String format = intent.getStringExtra("SCAN_RESULT_FORMAT");
 	            SQLiteDatabase data = dbh.getWritableDatabase(); //opens or creates database
-	            String my_query = "SELECT * FROM groc WHERE upc_id = " + ScanResults + ";";
-	            Cursor search = data.rawQuery(my_query, null); //the query of our database
-	            if (search.getCount() == 0){
+	            String my_query = "SELECT * FROM " +DataBaseHelper.productTable+ " WHERE " +DataBaseHelper.colID+ "=?"; 
+	            String[] args={ScanResults};
+	            Cursor search = data.rawQuery(my_query, args); //the query of our database
+	            if (search.moveToFirst() == false){
 	            	MyAlert("Product Not Found!", "Please Enter Product Information:");
 	            	Date end = new GregorianCalendar(year, month, day).getTime();
 	            	Date today = new Date();
 	            	long diff = end.getTime() - today.getTime();
 	            	shelflife = (diff / (1000L*60L*60L*24L));
-	            	ContentValues values = new ContentValues();
-	            	values.put("upc", ScanResults);
-	            	values.put("Expiration", shelflife);
-	            	values.put("Description", description);
-	            	data.insert("groc", null, values);
+	            	ContentValues newData = new ContentValues();
+	            	newData.put(DataBaseHelper.colDescription, description);
+	            	newData.put(DataBaseHelper.colExpiration, shelflife);
+	            	newData.put(DataBaseHelper.colID, ScanResults);
+	            	data.insert(DataBaseHelper.productTable, DataBaseHelper.colID, newData);
+	            	data.close();
 	            	//Intent new intent(this, calendarActivity.class);
 	            	//intent.putExtra();
 	            	//startactivityforresult(intent);
@@ -147,6 +140,7 @@ public class mainActivity extends Activity implements OnClickListener {
 	            		description = search.getString(descripInt);
 	            		shelflife = search.getInt(exprInt);
 	            	}
+	            	data.close();
 	            }
 	            // Handle successful scan
 	            // "contents" contains the barcode number
@@ -181,9 +175,10 @@ public class mainActivity extends Activity implements OnClickListener {
 	//the following is adapted from Fun Runner app by Charles Capps, thanks to 
 	//Charles for suggesting this method
 	public void MyAlert(String title, String msg){
-		
-		datePicker1 = (DatePicker) findViewById(R.id.datePicker1);
-		editText1 = (EditText) findViewById(R.id.editText1);
+		final DatePicker	datePicker1 = new DatePicker(this);
+		final EditText	editText1 = new EditText(this);
+		//datePicker1 = (DatePicker) findViewById(R.id.datePicker1);
+		//editText1 = (EditText) findViewById(R.id.editText1);
 		
 		LayoutInflater myInflator = LayoutInflater.from(this);
 		myPopup = myInflator.inflate(R.layout.data_popup, null);
@@ -215,15 +210,19 @@ public class mainActivity extends Activity implements OnClickListener {
 	
 	//Adapted from Vogella.org database tutorial
 	public class DataBaseHelper extends SQLiteOpenHelper {
-
+		static final String dbname = "MoldHoldDB";
+		static final String productTable = "Products";
+		static final String colID = "UpcID";
+		static final String colDescription = "Description";
+		static final String colExpiration = "Expiration";
+		
 		public DataBaseHelper(Context context) {
-			super(context, DATABASE_NAME, null, DATABASE_VERSION);
-			// TODO Auto-generated constructor stub
+			super(context, dbname, null, 1);
 		}
 
 		@Override
 		public void onCreate(SQLiteDatabase db) {
-			db.execSQL(DATABASE_CREATE);
+			db.execSQL("CREATE TABLE " +productTable+ " (" +colID+ " INTEGER PRIMARY KEY , " +colDescription+ " TEXT , " +colExpiration+ " INTEGER)");
 		}
 
 		@Override
