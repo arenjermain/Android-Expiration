@@ -29,6 +29,9 @@ public class Entry implements Cloneable {
 
   @Key
   public String title;
+  
+  @Key
+  public String id;
 
   @Key
   public String updated;
@@ -54,4 +57,6 @@ public class Entry implements Cloneable {
   String getEditLink() {
     return Link.find(links, "edit");
   }
+  
+//add get id method to extract actual id part?? - sc
 }

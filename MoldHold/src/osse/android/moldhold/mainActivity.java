@@ -20,6 +20,7 @@ import android.widget.Button;
 //		"AUTH_TOKEN"
 //		"GSESSION_ID"
 //		"ACCOUNT_NAME"
+//		"CALENDAR_ID"
 //
 public class mainActivity extends Activity implements OnClickListener {
 	private static final String 	TAG = "MoldHold";
@@ -41,15 +42,6 @@ public class mainActivity extends Activity implements OnClickListener {
 		Log.d(TAG, "initiating intent for calendarSetupActivity...");
 		Intent intent = new Intent(this, calendarSetupActivity.class);
 		startActivityForResult(intent, REQUEST_SETUP);
-		/*
-		setContentView(R.layout.main);
-		
-		// connect buttons to xml file and set listeners
-		btnScan = (Button) findViewById(R.id.btnScan);
-		btnUpdate = (Button) findViewById(R.id.btnUpdate);
-		btnScan.setOnClickListener(this);
-		btnUpdate.setOnClickListener(this);
-		*/
 	}
 	
 	
@@ -94,7 +86,8 @@ public class mainActivity extends Activity implements OnClickListener {
 	        }
 	    } else if (requestCode == REQUEST_SETUP) {
 	    	if (resultCode == RESULT_OK) {
-	    		// no extras to retreive...??
+	    		Log.d(TAG, "in onActivityResult, requestSetup");
+	    		// no extras to retrieve...??
 	    		setContentView(R.layout.main);
 	    		
 	    		// connect buttons to xml file and set listeners
@@ -105,6 +98,9 @@ public class mainActivity extends Activity implements OnClickListener {
 	    		btnQuit.setOnClickListener(this);
 	    		btnScan.setOnClickListener(this);
 	    		btnUpdate.setOnClickListener(this);
+	    	} else if (resultCode == RESULT_CANCELED) {
+	    		// Handle cancel...
+	    		Log.d(TAG, "result cancelled...");
 	    	}
 	    }
 	}
