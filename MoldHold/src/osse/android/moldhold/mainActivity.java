@@ -96,7 +96,7 @@ public class mainActivity extends Activity implements OnClickListener {
 	    } else if (requestCode == REQUEST_SETUP) {
 	    	if (resultCode == RESULT_OK) {
 	    		Log.d(TAG, "in onActivityResult, requestSetup");
-	    		// no extras to retreive...??
+	    		// no extras to retrieve...??
 	    		setContentView(R.layout.main);
 	    		
 	    		// connect buttons to xml file and set listeners
