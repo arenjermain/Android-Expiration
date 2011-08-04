@@ -95,11 +95,10 @@ public class CalendarClient {
     return executeGetFeed(url, CalendarFeed.class);
   }
   
-  // ADDED
-  
-  public EventEntry executeInsertEventEntry(EventEntry entry, CalendarUrl url)
-  		throws IOException {  
-	  return (EventEntry) executeInsert(entry, url);
+  // Added from CalendarClient.java in calendar-v2-atom-oauth-sample by 
+  // Yaniv Inbar
+  public EventEntry executeInsertEvent(EventEntry event, CalendarUrl url) throws IOException {
+	    return (EventEntry) executeInsert(event, url);
   }
   
   

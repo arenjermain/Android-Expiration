@@ -4,7 +4,6 @@ package osse.android.moldhold;
 // See COPYING file for license details. 
 
 
-import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import android.app.Activity;
@@ -39,8 +38,8 @@ import android.widget.EditText;
 //
 public class mainActivity extends Activity implements OnClickListener {
 	private static final String 	TAG = "MoldHold";
-	private static final int		REQUEST_SETUP = 0;
-	private static final int		REQUEST_ZXING = 1;
+	private static final int		REQUEST_ZXING = 0;
+	private static final int		REQUEST_CALENDAR = 1;
 
 	private Button					btnScan;
 	private Button					btnUpdate;
@@ -61,19 +60,20 @@ public class mainActivity extends Activity implements OnClickListener {
 		
 		// Verify login info is stored in preferences (if not add) and
 		// check that calendar exists (if not create)
-		Log.d(TAG, "initiating intent for calendarSetupActivity...");
-		Intent intent = new Intent(this, calendarSetupActivity.class);
-		startActivityForResult(intent, REQUEST_SETUP);
 
-		/*
+		
 		setContentView(R.layout.main);
-		dbh = new DataBaseHelper(this);
+		// dbh = new DataBaseHelper(this);
+		
 		// connect buttons to xml file and set listeners
 		btnScan = (Button) findViewById(R.id.btnScan);
 		btnUpdate = (Button) findViewById(R.id.btnUpdate);
+		btnQuit = (Button) findViewById(R.id.btnQuit);
+		
+		btnQuit.setOnClickListener(this);
 		btnScan.setOnClickListener(this);
 		btnUpdate.setOnClickListener(this);
-		*/
+		
 
 	}
 	
@@ -101,19 +101,19 @@ public class mainActivity extends Activity implements OnClickListener {
 
 
 	
-	//make popupwindow into alert dialog with inflator then you can get content
-	//via onclicklistener setting private member data set inside the main 
-	//activity
+	// make popupwindow into alert dialog with inflator then you can get content
+	// via onclicklistener setting private member data set inside the main 
+	// activity
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent intent) {
 		// call super??
 		Debug.startMethodTracing("mylog");
 	    try {
 		    if (requestCode == REQUEST_ZXING) {
-		        if (resultCode == RESULT_OK) {
+		        if (resultCode == RESULT_OK) {	// handle successful scan
 		        	ScanResults = intent.getStringExtra("SCAN_RESULT");
 		            //String format = intent.getStringExtra("SCAN_RESULT_FORMAT");
-		            SQLiteDatabase data = dbh.getWritableDatabase(); //opens or creates database
+		            SQLiteDatabase data = dbh.getWritableDatabase(); // opens or creates database
 		            String my_query = "SELECT * FROM " +DataBaseHelper.productTable+ " WHERE " +DataBaseHelper.colID+ "=?"; 
 		            String[] args={ScanResults};
 		            Cursor search = data.rawQuery(my_query, args); //the query of our database
@@ -129,9 +129,12 @@ public class mainActivity extends Activity implements OnClickListener {
 		            	newData.put(DataBaseHelper.colID, ScanResults);
 		            	data.insert(DataBaseHelper.productTable, DataBaseHelper.colID, newData);
 		            	data.close();
-		            	//Intent new intent(this, calendarActivity.class);
-		            	//intent.putExtra();
-		            	//startactivityforresult(intent);
+		            	
+		            	// LOCATION??
+		            	// Intent intent = new Intent(this, calendarActivity.class);
+		            	// intent.putExtra("DESCRIPTION", ); 
+		            	// intent.putExtra("SHELF_LIFE", ); 
+		            	// startActivityForResult(intent, REQUEST_CALENDAR);
 		            }
 		            else {
 		            	int descripInt = search.getColumnIndex("Description");
@@ -145,40 +148,20 @@ public class mainActivity extends Activity implements OnClickListener {
 		            	}
 		            	data.close();
 		            }
-		            // Handle successful scan
-		            // "contents" contains the barcode number
 		            
 		            // Intent intent = new Intent(this, <db??>.class);
 		            // startActivity(intent);
 		            // activate database activity
 		        } else if (resultCode == RESULT_CANCELED) {
 		            // Handle cancel...
+		        	Log.d(TAG, "zxing result cancelled...");
 		        }
-		    } else if (requestCode == REQUEST_SETUP) {
-		    	if (resultCode == RESULT_OK) {
-		    		Log.d(TAG, "in onActivityResult, requestSetup");
-		    		// no extras to retrieve...??
-		    		setContentView(R.layout.main);
-		    		
-		    		// connect buttons to xml file and set listeners
-		    		btnScan = (Button) findViewById(R.id.btnScan);
-		    		btnUpdate = (Button) findViewById(R.id.btnUpdate);
-		    		btnQuit = (Button) findViewById(R.id.btnQuit);
-		    		
-		    		btnQuit.setOnClickListener(this);
-		    		btnScan.setOnClickListener(this);
-		    		btnUpdate.setOnClickListener(this);
-		    	} else if (resultCode == RESULT_CANCELED) {
-		    		// Handle cancel...
-		    		Log.d(TAG, "result cancelled...");
-		    	}
-		    }
+		    } 
 	    } catch (Exception e) {
 	    	Log.i("MOLDHOLD", "Caught exception", e);
 	    }
 	    Debug.stopMethodTracing();
 	}
-	
 	
 	
 	// The following is adapted from Fun Runner app by Charles Capps, thanks to 

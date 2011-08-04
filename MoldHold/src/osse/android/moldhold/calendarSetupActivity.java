@@ -4,7 +4,6 @@ package osse.android.moldhold;
 // See COPYING file for license details. 
 
 import java.io.IOException;
-import java.util.Date;
 import java.util.List;
 
 import com.google.api.client.extensions.android2.AndroidHttp;
@@ -25,8 +24,6 @@ import com.google.api.client.sample.calendar.android.model.CalendarEntry;
 import com.google.api.client.sample.calendar.android.model.CalendarFeed;
 import com.google.api.client.sample.calendar.android.model.CalendarUrl;
 
-import com.google.api.client.sample.calendar.android.model.Link;
-import com.google.api.client.util.DateTime;
 import com.google.common.collect.Lists;
 
 import android.accounts.Account;
@@ -47,7 +44,6 @@ public class calendarSetupActivity extends Activity {
 	private String 						authToken;
 	private String 						accountName;
 	private SharedPreferences			settings;
-	private boolean						calendarExists = false; 
 	
 	CalendarClient 						client;
 	private final List<CalendarEntry> 	calendars = Lists.newArrayList();
@@ -292,7 +288,7 @@ public class calendarSetupActivity extends Activity {
 	    	while (true) {
 	    		// calls to client.executeGetCalendarFeed(url) invoke
 	    		// client.initialize() (defined above)
-	    	// add all existing owned calendars to list
+	    		// add all existing owned calendars to list
 	    		CalendarFeed feed = client.executeGetCalendarFeed(url);
 	    		if (feed.calendars != null) 
 	    			calendars.addAll(feed.calendars);
