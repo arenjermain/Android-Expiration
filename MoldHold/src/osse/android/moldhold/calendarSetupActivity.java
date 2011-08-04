@@ -4,6 +4,7 @@ package osse.android.moldhold;
 // See COPYING file for license details. 
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 
 import com.google.api.client.extensions.android2.AndroidHttp;
@@ -23,6 +24,9 @@ import com.google.api.client.sample.calendar.android.model.CalendarClient;
 import com.google.api.client.sample.calendar.android.model.CalendarEntry;
 import com.google.api.client.sample.calendar.android.model.CalendarFeed;
 import com.google.api.client.sample.calendar.android.model.CalendarUrl;
+
+import com.google.api.client.sample.calendar.android.model.Link;
+import com.google.api.client.util.DateTime;
 import com.google.common.collect.Lists;
 
 import android.accounts.Account;
@@ -32,23 +36,22 @@ import android.accounts.AccountManagerFuture;
 import android.accounts.AuthenticatorException;
 import android.accounts.OperationCanceledException;
 import android.app.Activity;
-import android.app.ListActivity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 
-public class calendarSetupActivity extends ListActivity {
+public class calendarSetupActivity extends Activity {
 	private GoogleAccountManager 		accountManager;
 	private String 						gsessionid;
 	private String 						authToken;
 	private String 						accountName;
 	private SharedPreferences			settings;
+	private boolean						calendarExists = false; 
 	
-	private CalendarClient 				client;
+	CalendarClient 						client;
 	private final List<CalendarEntry> 	calendars = Lists.newArrayList();
 	private String[] 					calendarNames;
-	
 
 	private final HttpTransport 		transport = 
 			AndroidHttp.newCompatibleTransport();
@@ -58,6 +61,7 @@ public class calendarSetupActivity extends ListActivity {
 	private static final String		CALENDAR_NAME = "MoldHold Expiration Dates";
 	private static final String 	AUTH_TOKEN_TYPE = "cl"; // for calendar
 	private static final int 		REQUEST_AUTHENTICATE = 0;
+
 	
 	
 	@Override
@@ -80,7 +84,6 @@ public class calendarSetupActivity extends ListActivity {
 	     		
 			public void initialize(HttpRequest request) {	
 				Log.d(TAG, "in new CalendarClient - initialize()");
-				
 				GoogleHeaders headers = new GoogleHeaders();
 				headers.setApplicationName("MoldHold/1.0");
 				headers.gdataVersion = "2";
@@ -104,7 +107,7 @@ public class calendarSetupActivity extends ListActivity {
 							HttpResponse response, boolean retrySupported) {
 						
 						Log.d(TAG, "in new CalendarClient - handleResponse()");
-						
+
 						switch (response.statusCode) {
 							case 302:	// found
 								GoogleUrl url = 
@@ -116,6 +119,7 @@ public class calendarSetupActivity extends ListActivity {
 								return true;
 							case 401:	// unauthorized -> bad authToken 
 								Log.d(TAG, "401 invalid token");
+
 								accountManager.invalidateAuthToken(authToken);
 								authToken = null;
 								SharedPreferences.Editor editor2 = settings.edit();
@@ -128,6 +132,7 @@ public class calendarSetupActivity extends ListActivity {
 				};
 			} // end public void initialize
 		}));  // end new calendarClient
+
 		Log.d(TAG, "calling gotAccount in onCreate()");
 		gotAccount();
 		Log.d(TAG, "calling executeRefreshCalendars in onCreate()");
@@ -227,8 +232,8 @@ public class calendarSetupActivity extends ListActivity {
 			            }
 			        },
 			        null);				// no handler
-
-	}	
+	} 
+		
 	
 	
 	
@@ -254,6 +259,7 @@ public class calendarSetupActivity extends ListActivity {
 		gsessionid = null;
 	}
 	
+
 	
 	//
 	@Override
@@ -271,13 +277,13 @@ public class calendarSetupActivity extends ListActivity {
 	    }
 	}
 	  
+	  
 	
 	
-	// Updates class variable "calendarsNames" (array) to contain the names of 
-	// all calendars currently found in own calendars feed. 
+	// Updates class variable "calendars" to contain all calendars currently 
+	// found in own calendars feed. 
 	private void executeRefreshCalendars() {
 		Log.d(TAG, "executing refreshCalendars");
-		
 	    List<CalendarEntry> calendars = this.calendars;
 	    calendars.clear();
 	    try {
@@ -286,6 +292,7 @@ public class calendarSetupActivity extends ListActivity {
 	    	while (true) {
 	    		// calls to client.executeGetCalendarFeed(url) invoke
 	    		// client.initialize() (defined above)
+	    	// add all existing owned calendars to list
 	    		CalendarFeed feed = client.executeGetCalendarFeed(url);
 	    		if (feed.calendars != null) 
 	    			calendars.addAll(feed.calendars);
@@ -358,7 +365,6 @@ public class calendarSetupActivity extends ListActivity {
           
   		  editor.putString("CALENDAR_ID", calendarID);
   		  editor.commit();
-          
         } catch (IOException e) {
           handleException(e);
         }
