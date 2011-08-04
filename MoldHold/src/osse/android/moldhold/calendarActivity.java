@@ -77,15 +77,16 @@ public class calendarActivity extends Activity {
 		
 		Bundle extras = getIntent().getExtras();
 		if (extras != null) {
-			productName = extras.getString("NAME");
-			shelfLife = extras.getInt("NUM_DAYS");
+			productName = extras.getString("DESCRIPTION");
+			shelfLife = extras.getInt("SHELF_LIFE");
 		}
 		setCurrentDate();
+		
 		// take current date, add shelf life, to get date for alarm
 		dateDisplay.setText(new StringBuilder()
 				.append("Your ").append(productName)
 				.append(" has a shelf life of ").append(shelfLife)
-				.append("days. An alarm notifying you of its expiration ")
+				.append(" days. An alarm notifying you of its expiration ")
 				.append("will be set for:\n")
         		.append(cMonth + 1).append("-")	// Month is 0 based so add 1
         		.append(cDay).append("-")
@@ -140,26 +141,4 @@ public class calendarActivity extends Activity {
         // Send the request and receive the response
         AtomEntry insertedEntry = service.Insert(postUri, entry);*/
     }
-
-import android.app.Activity;
-import android.os.Bundle;
-
-
-// Existence of MoldHold calendar was verified at application invocation,
-// and the calendar id was verified to exist in preferences. 
-public class calendarActivity extends Activity {
-	private String	productName = "";
-	private int		shelfLife = 0;		// in days
-
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.calendar);
-		
-		Bundle extras = getIntent().getExtras();
-		if (extras != null) {
-			productName = extras.getString("NAME");
-			shelfLife = extras.getInt("NUM_DAYS");
-		}
-	}
 }
