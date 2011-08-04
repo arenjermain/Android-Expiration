@@ -23,7 +23,6 @@
 				</activity>
 				<activity android:name=".calendarActivity"></activity>
 				<activity android:name=".calendarSetupActivity"></activity>
-				<activity
-						android:name="userInfoDialog"></activity>
+
 		</application>
 </manifest>

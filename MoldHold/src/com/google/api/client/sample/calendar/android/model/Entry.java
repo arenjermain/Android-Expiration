@@ -29,12 +29,18 @@ public class Entry implements Cloneable {
 
   @Key
   public String title;
+  
+  @Key
+  public String id;
 
   @Key
   public String updated;
 
   @Key("link")
   public List<Link> links;
+  
+ // @Key
+ // public String uid;
 
 
   @Override
@@ -52,4 +58,6 @@ public class Entry implements Cloneable {
   String getEditLink() {
     return Link.find(links, "edit");
   }
+  
+//add get id method to extract actual id part?? - sc
 }

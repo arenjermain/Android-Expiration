@@ -53,7 +53,9 @@ public class CalendarClient {
 
   public void executeDelete(Entry entry) throws IOException {
 
-    HttpRequest request = requestFactory.buildDeleteRequest(new GenericUrl(entry.getEditLink()));
+    HttpRequest request = requestFactory.buildDeleteRequest(
+    		new GenericUrl(entry.getEditLink()));
+    
     request.execute().ignore();
   }
 
@@ -94,4 +96,12 @@ public class CalendarClient {
   public CalendarFeed executeGetCalendarFeed(CalendarUrl url) throws IOException {
     return executeGetFeed(url, CalendarFeed.class);
   }
+  
+  // Added from CalendarClient.java in calendar-v2-atom-oauth-sample by 
+  // Yaniv Inbar
+  public EventEntry executeInsertEvent(EventEntry event, CalendarUrl url) throws IOException {
+	    return (EventEntry) executeInsert(event, url);
+  }
+  
+  
 }

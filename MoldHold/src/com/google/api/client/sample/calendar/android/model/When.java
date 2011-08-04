@@ -1,4 +1,3 @@
-
 /*
  * Copyright (c) 2010 Google Inc.
  *
@@ -17,22 +16,20 @@
 
 package com.google.api.client.sample.calendar.android.model;
 
+import com.google.api.client.util.DateTime;
 import com.google.api.client.util.Key;
 
-public class EventEntry extends Entry {
-	
-	@Key("gd:when")
-	public When when;
-	
+/**
+ * @author Yaniv Inbar
+ */
+public class When {
 
-	public String getEventFeedLink() {
-		return Link.find(links, "http://schemas.google.com/gCal/2005#eventFeed");
-	}
+	@Key("@startTime")
+	public DateTime startTime;
 
-	
-	
-	@Override
-	public EventEntry clone() {
-		return (EventEntry) super.clone();
-	}
+	@Key("@endTime")
+	public DateTime endTime;
+  
+	@Key("gd:reminder")
+	public Reminder reminder;
 }
