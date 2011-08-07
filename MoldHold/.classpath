@@ -1,40 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="gen"/>
-<<<<<<< HEAD
-	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
-	<classpathentry exported="true" kind="lib" path="lib/google-api-java-client-1.4.1-beta/google-api-client-1.4.1-beta.jar" sourcepath="lib/google-api-java-client-1.4.1-beta/google-api-client-1.4.1-beta-sources.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/google-api-java-client-1.4.1-beta/dependencies/gson-1.6.jar" sourcepath="lib/google-api-java-client-1.4.1-beta/dependencies/gson-1.6-sources.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/google-api-java-client-1.4.1-beta/dependencies/guava-r09.jar" sourcepath="lib/google-api-java-client-1.4.1-beta/dependencies/guava-r09-sources.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/google-api-java-client-1.4.1-beta/dependencies/jackson-core-asl-1.6.7.jar" sourcepath="lib/google-api-java-client-1.4.1-beta/dependencies/jackson-core-asl-1.6.7-sources.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/google-api-java-client-1.4.1-beta/google-api-client-extensions-1.4.1-beta.jar" sourcepath="lib/google-api-java-client-1.4.1-beta/google-api-client-extensions-1.4.1-beta-sources.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/google-api-java-client-1.4.1-beta/google-api-client-extensions-android2-1.4.1-beta.jar" sourcepath="lib/google-api-java-client-1.4.1-beta/google-api-client-extensions-android2-1.4.1-beta-sources.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/google-api-java-client-1.4.1-beta/google-api-client-googleapis-1.4.1-beta.jar" sourcepath="lib/google-api-java-client-1.4.1-beta/google-api-client-googleapis-1.4.1-beta-sources.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/google-api-java-client-1.4.1-beta/google-api-client-googleapis-extensions-1.4.1-beta.jar" sourcepath="lib/google-api-java-client-1.4.1-beta/google-api-client-googleapis-extensions-1.4.1-beta-sources.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/google-api-java-client-1.4.1-beta/google-api-client-googleapis-extensions-android2-1.4.1-beta.jar" sourcepath="lib/google-api-java-client-1.4.1-beta/google-api-client-googleapis-extensions-android2-1.4.1-beta-sources.jar"/>
-=======
+	<classpathentry kind="src" path=""/>
+	<classpathentry kind="lib" path="lib/google-api-java-client-1.4.1-beta/dependencies/gson-1.6.jar" sourcepath="lib/google-api-java-client-1.4.1-beta/dependencies/gson-1.6-sources.jar"/>
 	<classpathentry kind="lib" path="lib/google-api-java-client-1.4.1-beta/google-api-client-1.4.1-beta.jar" sourcepath="lib/google-api-java-client-1.4.1-beta/google-api-client-1.4.1-beta-sources.jar"/>
 	<classpathentry kind="lib" path="lib/google-api-java-client-1.4.1-beta/google-api-client-extensions-1.4.1-beta.jar" sourcepath="lib/google-api-java-client-1.4.1-beta/google-api-client-extensions-1.4.1-beta-sources.jar"/>
 	<classpathentry kind="lib" path="lib/google-api-java-client-1.4.1-beta/google-api-client-extensions-android2-1.4.1-beta.jar" sourcepath="lib/google-api-java-client-1.4.1-beta/google-api-client-extensions-android2-1.4.1-beta-sources.jar"/>
+	<classpathentry kind="lib" path="lib/google-api-java-client-1.4.1-beta/google-api-client-extensions-android3-1.4.1-beta.jar" sourcepath="lib/google-api-java-client-1.4.1-beta/google-api-client-extensions-android3-1.4.1-beta-sources.jar"/>
 	<classpathentry kind="lib" path="lib/google-api-java-client-1.4.1-beta/google-api-client-googleapis-1.4.1-beta.jar" sourcepath="lib/google-api-java-client-1.4.1-beta/google-api-client-googleapis-1.4.1-beta-sources.jar"/>
 	<classpathentry kind="lib" path="lib/google-api-java-client-1.4.1-beta/google-api-client-googleapis-extensions-1.4.1-beta.jar" sourcepath="lib/google-api-java-client-1.4.1-beta/google-api-client-googleapis-extensions-1.4.1-beta-sources.jar"/>
 	<classpathentry kind="lib" path="lib/google-api-java-client-1.4.1-beta/google-api-client-googleapis-extensions-android2-1.4.1-beta.jar" sourcepath="lib/google-api-java-client-1.4.1-beta/google-api-client-googleapis-extensions-android2-1.4.1-beta-sources.jar"/>
 	<classpathentry kind="lib" path="lib/google-api-java-client-1.4.1-beta/dependencies/guava-r09.jar" sourcepath="lib/google-api-java-client-1.4.1-beta/dependencies/guava-r09-sources.jar"/>
-	<classpathentry kind="lib" path="lib/google-api-java-client-1.4.1-beta/dependencies/jackson-core-asl-1.6.7.jar" sourcepath="lib/google-api-java-client-1.4.1-beta/dependencies/jackson-core-asl-1.6.7-sources.jar"/>
-	<classpathentry kind="lib" path="lib/google-api-java-client-1.4.1-beta/dependencies/gson-1.6.jar" sourcepath="lib/google-api-java-client-1.4.1-beta/dependencies/gson-1.6-sources.jar"/>
 	<classpathentry kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
-<<<<<<< HEAD
-=======
-	<classpathentry kind="lib" path="lib/google-api-java-client-1.4.1-beta/google-api-client-1.4.1-beta.jar" sourcepath="lib/google-api-java-client-1.4.1-beta/google-api-client-1.4.1-beta-sources.jar"/>
-	<classpathentry kind="lib" path="lib/google-api-java-client-1.4.1-beta/dependencies/gson-1.6.jar" sourcepath="lib/google-api-java-client-1.4.1-beta/dependencies/gson-1.6-sources.jar"/>
-	<classpathentry kind="lib" path="lib/google-api-java-client-1.4.1-beta/dependencies/guava-r09.jar" sourcepath="lib/google-api-java-client-1.4.1-beta/dependencies/guava-r09-sources.jar"/>
-	<classpathentry kind="lib" path="lib/google-api-java-client-1.4.1-beta/dependencies/jackson-core-asl-1.6.7.jar" sourcepath="lib/google-api-java-client-1.4.1-beta/dependencies/jackson-core-asl-1.6.7-sources.jar"/>
-	<classpathentry kind="lib" path="lib/google-api-java-client-1.4.1-beta/google-api-client-extensions-1.4.1-beta.jar" sourcepath="lib/google-api-java-client-1.4.1-beta/google-api-client-extensions-1.4.1-beta-sources.jar"/>
-	<classpathentry kind="lib" path="lib/google-api-java-client-1.4.1-beta/google-api-client-extensions-android2-1.4.1-beta.jar" sourcepath="lib/google-api-java-client-1.4.1-beta/google-api-client-extensions-android2-1.4.1-beta-sources.jar"/>
-	<classpathentry kind="lib" path="lib/google-api-java-client-1.4.1-beta/google-api-client-googleapis-1.4.1-beta.jar" sourcepath="lib/google-api-java-client-1.4.1-beta/google-api-client-googleapis-1.4.1-beta-sources.jar"/>
-	<classpathentry kind="lib" path="lib/google-api-java-client-1.4.1-beta/google-api-client-googleapis-extensions-1.4.1-beta.jar" sourcepath="lib/google-api-java-client-1.4.1-beta/google-api-client-googleapis-extensions-1.4.1-beta-sources.jar"/>
-	<classpathentry kind="lib" path="lib/google-api-java-client-1.4.1-beta/google-api-client-googleapis-extensions-android2-1.4.1-beta.jar" sourcepath="lib/google-api-java-client-1.4.1-beta/google-api-client-googleapis-extensions-android2-1.4.1-beta-sources.jar"/>
->>>>>>> defbf10510085e0ed452c001460a20fc8d501a00
->>>>>>> 19b79897f1807f16d881a9853f1ff67f04e95be5
 	<classpathentry kind="output" path="bin"/>
 </classpath>
