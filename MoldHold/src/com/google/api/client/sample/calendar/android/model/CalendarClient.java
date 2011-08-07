@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Google Inc.
+ * Copyright (c) 2010 Google Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  * in compliance with the License. You may obtain a copy of the License at
@@ -52,7 +52,10 @@ public class CalendarClient {
   }
 
   public void executeDelete(Entry entry) throws IOException {
-    HttpRequest request = requestFactory.buildDeleteRequest(new GenericUrl(entry.getEditLink()));
+
+    HttpRequest request = requestFactory.buildDeleteRequest(
+    		new GenericUrl(entry.getEditLink()));
+    
     request.execute().ignore();
   }
 
@@ -93,4 +96,12 @@ public class CalendarClient {
   public CalendarFeed executeGetCalendarFeed(CalendarUrl url) throws IOException {
     return executeGetFeed(url, CalendarFeed.class);
   }
+  
+  // Added from CalendarClient.java in calendar-v2-atom-oauth-sample by 
+  // Yaniv Inbar
+  public EventEntry executeInsertEvent(EventEntry event, CalendarUrl url) throws IOException {
+	    return (EventEntry) executeInsert(event, url);
+  }
+  
+  
 }

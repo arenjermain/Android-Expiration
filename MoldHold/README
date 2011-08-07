@@ -24,10 +24,17 @@ Google calendar account, specifically for the expiring for items. The applicatio
 based on the shelf life of the food item and set an alarm on that date. You will have the ability to decide how far in 
 advance you want to be notified before your food expires.
 
+Android Specifications:
+	-This project is built to be compatible with Android Platform 2.3.3. 
+	-It requires that your phone has a built-in camera and internet access.
+	-It requires that you have a Google account and will access Google Calendar.
+
 Build Instructions:
 Download application to your phone and allow access to Google Calendar.
 
 Credit for Code used:
+All integrity of integrated code is maintained under the Apache license.
+
 We incorporated the Zxing code for a barcode scanner with our project. The code for this can be found at:     
        http://code.google.com/p/zxing/
 The code is protected under the Apache license. Thanks to the Zxing team!
@@ -36,3 +43,13 @@ We also integrated some of Yaniv Inbar's code for accessing the Google calendar 
 "calendar-v2-atom-android-sample". This code can be found at: 
        http://code.google.com/p/google-api-java-client/source/browse/calendar-v2-atom-android-sample/?repo=samples 
 Thanks to Yaniv Inbar with his help navigating the Google API!
+
+We used two images from OpenClipArt (openclipart.org). The images associated with OpenClipArt 
+are not under copyright. Thanks to ArtFavor for your fridge image! Thanks to rg1024 for your 
+alarm image!
+	ArtFavor's work can be found at: http://www.openclipart.org/user-detail/ArtFavor
+	rg1024's work can be found at: http://www.openclipart.org/user-detail/rg1024
+	
+Thanks to Charles Capps for allowing us to access and modify his method from the Fun 
+Runner application. Charles' applications can be found at:
+	https://github.com/Xanthanov/Android--All-Apps
