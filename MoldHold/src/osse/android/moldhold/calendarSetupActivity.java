@@ -4,9 +4,7 @@ package osse.android.moldhold;
 // See COPYING file for license details. 
 
 import java.io.IOException;
-import java.util.Date;
 import java.util.List;
-
 import com.google.api.client.extensions.android2.AndroidHttp;
 import com.google.api.client.googleapis.GoogleHeaders;
 import com.google.api.client.googleapis.GoogleUrl;
@@ -19,15 +17,11 @@ import com.google.api.client.http.HttpResponse;
 import com.google.api.client.http.HttpResponseException;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.HttpUnsuccessfulResponseHandler;
-
 import com.google.api.client.sample.calendar.android.model.CalendarClient;
 import com.google.api.client.sample.calendar.android.model.CalendarEntry;
 import com.google.api.client.sample.calendar.android.model.CalendarFeed;
 import com.google.api.client.sample.calendar.android.model.CalendarUrl;
-import com.google.api.client.sample.calendar.android.model.Link;
-import com.google.api.client.util.DateTime;
 import com.google.common.collect.Lists;
-
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.accounts.AccountManagerCallback;
@@ -39,7 +33,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.ArrayAdapter;
 
 public class calendarSetupActivity extends Activity {
 	private GoogleAccountManager 		accountManager;

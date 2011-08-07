@@ -13,4 +13,9 @@
 				android:layout_width="fill_parent"
 				android:text="@string/update"
 				android:id="@+id/btnUpdate" android:freezesText="true"></Button>
+		<Button 
+				android:id="@+id/btnQuit" 
+				android:layout_height="wrap_content" 
+				android:layout_width="fill_parent" 
+				android:text="@string/Quit"></Button>
 </LinearLayout>

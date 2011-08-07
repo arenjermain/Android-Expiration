@@ -1,13 +1,11 @@
 package osse.android.moldhold;
 
+
+// Copyright (c) 2010 Michelle Carter, Sarah Cathey, Aren Edlund-Jermain
+// See COPYING file for license details. 
+
 import java.util.Date;
 import java.util.GregorianCalendar;
-// Copyright (c) 2010 Michelle Carter, Sarah Cathey, Aren Edlund-Jermain
-// See COPYING file for license details. 
-
-// Copyright (c) 2010 Michelle Carter, Sarah Cathey, Aren Edlund-Jermain
-// See COPYING file for license details. 
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ContentValues;
@@ -21,7 +19,6 @@ import android.os.Bundle;
 import android.os.Debug;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -40,26 +37,15 @@ import android.widget.EditText;
 //		"ACCOUNT_NAME"
 //
 public class mainActivity extends Activity implements OnClickListener {
-	private static final String 	TAG = "MoldHold";
-	private static final int		REQUEST_SETUP = 0;
-	private static final int		REQUEST_ZXING = 1;
-
-	private Button					btnScan;
-	private Button					btnUpdate;
-	private Button					btnQuit;
-	
-
-	private static final String 	TAG = "MoldHold";
-	private static final int		REQUEST_SETUP = 0;
-	private static final int		REQUEST_ZXING = 1;
-
-	private Button					btnScan;
-	private Button					btnUpdate;
-	private Button					btnQuit;
-	
-
 	
 	public static String ScanResults = null; //to make sure of initial value
+	
+	private static final String 	TAG = "MoldHold";
+	private static final int		REQUEST_SETUP = 0;
+	private static final int		REQUEST_ZXING = 1;
+	private Button					btnScan;
+	private Button					btnUpdate;
+	private Button					btnQuit;
 	private View myPopup;
 	private DataBaseHelper dbh;
 	private int day; //to get day from user datePicker1
@@ -74,7 +60,7 @@ public class mainActivity extends Activity implements OnClickListener {
 		
 		// Verify login info is stored in preferences (if not add) and
 		// check that calendar exists (if not create)
-		Log.d(TAG, "initiating intent for calendarSetupActivity...");
+		//Log.d(TAG, "initiating intent for calendarSetupActivity...");
 		Intent intent = new Intent(this, calendarSetupActivity.class);
 		startActivityForResult(intent, REQUEST_SETUP);
 		setContentView(R.layout.main);
@@ -84,7 +70,7 @@ public class mainActivity extends Activity implements OnClickListener {
 		btnUpdate = (Button) findViewById(R.id.btnUpdate);
 		btnScan.setOnClickListener(this);
 		btnUpdate.setOnClickListener(this);
-		
+		btnQuit.setOnClickListener(this);
 	}
 	
 	
@@ -117,8 +103,6 @@ public class mainActivity extends Activity implements OnClickListener {
 	//activity
 	public void onActivityResult(int requestCode, int resultCode, Intent intent) {
 		// call super??
-		Debug.startMethodTracing("mylog");
-	    try {
 	    if (requestCode == REQUEST_ZXING) {
 	        if (resultCode == RESULT_OK) {
 	        	ScanResults = intent.getStringExtra("SCAN_RESULT");
@@ -178,9 +162,6 @@ public class mainActivity extends Activity implements OnClickListener {
 	    		btnScan.setOnClickListener(this);
 	    		btnUpdate.setOnClickListener(this);
 	    	}
-	    }
-	    } catch (Exception e) {
-	    	Log.i("MOLDHOLD", "Caught exception", e);
 	    }
 	    Debug.stopMethodTracing();
 	}
