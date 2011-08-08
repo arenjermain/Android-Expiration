@@ -40,6 +40,7 @@ import android.accounts.AuthenticatorException;
 import android.accounts.OperationCanceledException;
 import android.app.Activity;
 import android.app.DatePickerDialog;
+import android.app.Dialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -494,15 +495,33 @@ public class calendarActivity extends Activity {
 
                 public void onDateSet(DatePicker view, int year, 
                                       int monthOfYear, int dayOfMonth) {
-                    cYear = year;
-                    cMonth = monthOfYear;
-                    cDay = dayOfMonth;
+                    //cYear = year;
+                    //cMonth = monthOfYear;
+                    //cDay = dayOfMonth;
                     // set event??
+    				// add event using date
+    				// EventEntry event = newEvent();
+    				// addNewEvent(event);
+    				// toast to say alarm has been added
+                	// finish();
                 }
             };
       
             
             
+    @Override
+    protected Dialog onCreateDialog(int id) {
+        switch (id) {
+        case DATE_DIALOG_ID:
+            return new DatePickerDialog(this,
+                        mDateSetListener,
+                        cYear, cMonth, cDay);
+        }
+        return null;
+    }        
+       
+    
+    
     //        
     private void addNewEvent(EventEntry event) {
     	// need: https://www.google.com/calendar/feeds/<calID>/owncalendars/full

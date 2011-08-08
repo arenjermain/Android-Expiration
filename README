@@ -4,7 +4,7 @@ An Android App by Aren Edlund-Jermain, Sarah Cathey, Michelle Carter
 Copyright © 2011 Aren Edlund-Jermain, Sarah Cathey, Michelle Carter
 Released under the Apache License (http://www.apache.org/licenses/LICENSE-2.0)
 
-Programmers: 
+Developers: 
    Aren Edlund-Jermain (aren.edlundjermain@gmail.com)
    Sarah Cathey (sscathey@gmail.com)
    Michelle Carter (mi.l.carter@gmail.com)
@@ -32,7 +32,12 @@ We incorporated the Zxing code for a barcode scanner with our project. The code 
        http://code.google.com/p/zxing/
 The code is protected under the Apache license. Thanks to the Zxing team!
 
-We also integrated some of Yaniv Inbar's code for accessing the Google calendar in his project 
+We also integrated some of Yaniv Inbar's code for accessing the Google calendar in his projects 
 "calendar-v2-atom-android-sample". This code can be found at: 
        http://code.google.com/p/google-api-java-client/source/browse/calendar-v2-atom-android-sample/?repo=samples 
-Thanks to Yaniv Inbar with his help navigating the Google API!
+"calendar-v2-atom-oauth-sample".  This code can be found at: 
+	http://code.google.com/p/google-api-java-client/source/browse/calendar-v2-atom-oauth-sample/?repo=samples
+These examples are protected under the Apache license. Thanks to Yaniv Inbar with his help navigating the Google API!
+
+We also utilized the Date Picker tutorial available from: 
+	http://developer.android.com/resources/tutorials/views/hello-datepicker.html
