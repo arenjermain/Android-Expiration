@@ -1,0 +1,67 @@
+MoldHold
+An Android App by Aren Edlund-Jermain, Sarah Cathey, Michelle Carter
+
+Copyright © 2011 Aren Edlund-Jermain, Sarah Cathey, Michelle Carter
+Released under the Apache License (http://www.apache.org/licenses/LICENSE-2.0, also see COPYING file)
+
+Developers: 
+   Aren Edlund-Jermain (aren.edlundjermain@gmail.com)
+   Sarah Cathey (sscathey@gmail.com)
+   Michelle Carter (mi.l.carter@gmail.com)
+
+What does it do?:
+This Android mobile application will scan grocery products that have UPCs and set an alarm in your phone to notify you 
+before your food expires! The application will help keep you from forgetting about food in your fridge. Instead of going 
+out for dinner because you forgot about that delicious chicken you have in the back of the fridge, you can save time and
+ money by eating in. MoldHold will save you extra trips to the grocery store to replace items hidden away in the fridge 
+that you forgot about!
+
+How to use it: 
+Initially, you will scan a grocery item and enter its name and the expiration date listed on the packaging into a database.
+Upon future scanning of that item, you will not be prompted to enter anymore information about the product as the phone 
+will automatically access the expiration date from the database. The application will create a calendar using the your 
+Google calendar account, specifically for the expiring for items. The application will calculate a date in the calendar 
+based on the shelf life of the food item and set an alarm on that date. You will have the ability to decide how far in 
+advance you want to be notified before your food expires.
+
+Android Specifications:
+	-This project is built to be compatible with Android Platform 2.3.3. 
+	-It requires that your phone has a built-in camera and internet access.
+	-It requires that you have a Google account and allow access to your Google Calendars.
+	-It requires that you have the Zxing barcode scanner application installed on your phone.
+
+Build Instructions:
+See file "Build_Instructions.pdf."
+
+Installation Instructions:
+After the project has been successfully imported into Eclipse (see "Build_Instructions.pdf"), connect your phone to your 
+computer. Open Eclipse (if it is not open already), select Run -> Run As -> Android Application and choose your phone as
+the destination device (if you have created any emulators in Eclipse, they may show as an option). By running the 
+application on your phone via Eclipse, MoldHold will automatically be installed to your phone. 
+
+Credit for Code used:
+All integrity of integrated code is maintained under the Apache license.
+
+We incorporated the Zxing code for a barcode scanner with our project. The code for this can be found at:     
+       http://code.google.com/p/zxing/
+The code is protected under the Apache license. Thanks to the Zxing team!
+
+We also integrated some of Yaniv Inbar's code for accessing the Google calendar in his projects 
+"calendar-v2-atom-android-sample". This code can be found at: 
+       http://code.google.com/p/google-api-java-client/source/browse/calendar-v2-atom-android-sample/?repo=samples 
+"calendar-v2-atom-oauth-sample".  This code can be found at: 
+	http://code.google.com/p/google-api-java-client/source/browse/calendar-v2-atom-oauth-sample/?repo=samples
+These examples are protected under the Apache license. Thanks to Yaniv Inbar with his help navigating the Google API!
+
+We also utilized the Date Picker tutorial available from: 
+	http://developer.android.com/resources/tutorials/views/hello-datepicker.html
+
+We used two images from OpenClipArt (openclipart.org). The images associated with OpenClipArt 
+are not under copyright. Thanks to ArtFavor for your fridge image! Thanks to rg1024 for your 
+alarm image!
+	ArtFavor's work can be found at: http://www.openclipart.org/user-detail/ArtFavor
+	rg1024's work can be found at: http://www.openclipart.org/user-detail/rg1024
+	
+Thanks to Charles Capps for allowing us to access and modify his method from the Fun 
+Runner application. Charles' applications can be found at:
+	https://github.com/Xanthanov/Android--All-Apps
