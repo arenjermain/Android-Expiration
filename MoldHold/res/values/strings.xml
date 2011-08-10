@@ -6,4 +6,5 @@
     <string name="promptForUserInfo">This application requires access to your google calendar. Please enter your google account username and password below.</string>
     <string name="ok">Ok</string>
     <string name="Quit">Quit</string>
+    <string name="btnCancel">Cancel</string>
 </resources>

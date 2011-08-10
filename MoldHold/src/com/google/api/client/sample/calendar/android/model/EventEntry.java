@@ -22,6 +22,7 @@ public class EventEntry extends Entry {
 	@Key("gd:when")
 	public When when;
 	
+	
 
 	public String getEventFeedLink() {
 		return Link.find(links, "http://schemas.google.com/gCal/2005#eventFeed");

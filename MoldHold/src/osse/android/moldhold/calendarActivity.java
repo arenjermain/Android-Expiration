@@ -1,42 +1,14 @@
-
 /*
-Copyright � 2011 Sarah Cathey, Michelle Carter, Aren Edlund-Jermain
+Copyright (c) 2011 Sarah Cathey, Michelle Carter, Aren Edlund-Jermain
 This project is protected under the Apache license. 
 Please see COPYING file in the distribution for license terms.
 */
 
 package osse.android.moldhold;
 
-import com.google.api.client.sample.calendar.android.model.CalendarUrl;
-
 import java.io.IOException;
-import java.util.Date;
-import java.util.List;
 import java.util.Calendar;
-
-import com.google.api.client.extensions.android2.AndroidHttp;
-import com.google.api.client.googleapis.GoogleHeaders;
-import com.google.api.client.googleapis.GoogleUrl;
-import com.google.api.client.googleapis.MethodOverride;
-import com.google.api.client.googleapis.extensions.android2.auth.GoogleAccountManager;
-import com.google.api.client.http.HttpExecuteInterceptor;
-import com.google.api.client.http.HttpRequest;
-import com.google.api.client.http.HttpRequestInitializer;
-import com.google.api.client.http.HttpResponse;
-import com.google.api.client.http.HttpResponseException;
-import com.google.api.client.http.HttpTransport;
-import com.google.api.client.http.HttpUnsuccessfulResponseHandler;
-
-import com.google.api.client.sample.calendar.android.model.CalendarClient;
-import com.google.api.client.sample.calendar.android.model.CalendarEntry;
-import com.google.api.client.sample.calendar.android.model.CalendarFeed;
-import com.google.api.client.sample.calendar.android.model.CalendarUrl;
-import com.google.api.client.sample.calendar.android.model.EventEntry;
-import com.google.api.client.sample.calendar.android.model.Reminder;
-import com.google.api.client.sample.calendar.android.model.When;
-import com.google.api.client.util.DateTime;
-
-import com.google.common.collect.Lists;
+import java.util.List;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
@@ -51,21 +23,46 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.api.client.extensions.android2.AndroidHttp;
+import com.google.api.client.googleapis.GoogleHeaders;
+import com.google.api.client.googleapis.GoogleUrl;
+import com.google.api.client.googleapis.MethodOverride;
+import com.google.api.client.googleapis.extensions.android2.auth.GoogleAccountManager;
+import com.google.api.client.http.HttpExecuteInterceptor;
+import com.google.api.client.http.HttpRequest;
+import com.google.api.client.http.HttpRequestInitializer;
+import com.google.api.client.http.HttpResponse;
+import com.google.api.client.http.HttpResponseException;
+import com.google.api.client.http.HttpTransport;
+import com.google.api.client.http.HttpUnsuccessfulResponseHandler;
+import com.google.api.client.sample.calendar.android.model.CalendarClient;
+import com.google.api.client.sample.calendar.android.model.CalendarEntry;
+import com.google.api.client.sample.calendar.android.model.CalendarFeed;
+import com.google.api.client.sample.calendar.android.model.CalendarUrl;
+import com.google.api.client.sample.calendar.android.model.EventEntry;
+import com.google.api.client.sample.calendar.android.model.Reminder;
+import com.google.api.client.sample.calendar.android.model.When;
+import com.google.api.client.util.DateTime;
+import com.google.common.collect.Lists;
 
 
 // Existence of MoldHold calendar was verified at application invocation.
 //
-// This activity is started by database activity. 
+// This activity is started by database activity. x
 
 
 // credit to HelloDatePickerActivity Example
 public class calendarActivity extends Activity {
 	private String		productName = "";
-	private int			shelfLife = 0;	// in days
+	private Long		shelfLife;		// in days
     private int 		cYear;			// current year
     private int 		cMonth;			// current month
     private int 		cDay;			// current day
@@ -95,9 +92,9 @@ public class calendarActivity extends Activity {
 	
 	
 	// UI
-	private TextView 	dateDisplay;
-	private Button		btnOk;
-	private Button		btnPickDate;
+	private TextView 				dateDisplay;
+	private Button					btnOk;
+	private Button					btnPickDate;
 
 	
 	
@@ -106,10 +103,6 @@ public class calendarActivity extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-
-		// Verfi
-		// setContentLayout to validating... page or something??
-		// setContentView(R.layout.processing);
 		
 		accountManager = new GoogleAccountManager(this);
 		settings = getSharedPreferences(PREF, MODE_PRIVATE);
@@ -180,19 +173,35 @@ public class calendarActivity extends Activity {
 		Log.d(TAG, "calling executeRefreshCalendars in onCreate()");
 		executeRefreshCalendars();
 		
+	/*	if (authToken == null) {
+			setContentView(R.layout.status);	
+			while(authToken == null) {
+				//Log.d(TAG, "main thread yielding...");
+				//Thread.yield();
+				;
+			}
+		}*/
+		
 		Log.d(TAG, "checking if calendar exists...");
-		if (!checkCalendarExists()) {
+		boolean found = checkCalendarExists();
+		if (found == false) {
 			Log.d(TAG, "creating new calendar...");
 			createNewCalendar();  // saves calendarID to preferences
 		}
-		
+		Log.d(TAG, "calendar was found, now checking cal id...");
 			
-		if (calendarID == null)
+		if (calendarID == null) {
 			Log.d(TAG, "Shit, calendarID is null... this should never happend...");
+			//finish();
+		}
+		
+		
+		// Must setContentView before calling findViewById for buttons!!!
+		setContentView(R.layout.calendar);
 		
 		dateDisplay = (TextView) findViewById(R.id.dateDisplay);
 		btnOk = (Button) findViewById(R.id.btnOk);
-		btnOk.setOnClickListener(new View.OnClickListener() {
+		btnOk.setOnClickListener(new OnClickListener() {
 			
 			@Override
             public void onClick(View v) {
@@ -200,37 +209,45 @@ public class calendarActivity extends Activity {
 				EventEntry event = newEvent();
 				addNewEvent(event);
 				// toast to say alarm has been added
+				makeToast();
+				Intent intent = new Intent();
+            	setResult(Activity.RESULT_OK, intent);
                 finish();	// return to mainActivity
             }
-        });
-		btnPickDate = (Button) findViewById(R.id.pickDate);
-		btnPickDate.setOnClickListener(new View.OnClickListener() {
+        }); 
+		
+		btnPickDate = (Button) findViewById(R.id.btnPickDate);
+		btnPickDate.setOnClickListener(new OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
+				Log.d(TAG, "about to call show dialog");
 				showDialog(DATE_DIALOG_ID);
+				
+
+				
 				// finish from here instead of callback??
 			}
-		});
+		}); 
 		
 		// get extras
 		Bundle extras = getIntent().getExtras();
 		if (extras != null) {
 			productName = extras.getString("DESCRIPTION");
-			shelfLife = extras.getInt("SHELF_LIFE");
+			shelfLife = extras.getLong("SHELF_LIFE");
+			
 		}
-		
 		setAlarmDate();
 		
 		dateDisplay.setText(new StringBuilder()
 				.append("Your ").append(productName)
 				.append(" has a shelf life of ").append(shelfLife)
-				.append("days. An alarm notifying you of its expiration ")
+				.append(" days. An alarm notifying you of its expiration ")
 				.append("will be set for:\n")
         		.append(cMonth + 1).append("-")	// Month is 0 based so add 1
         		.append(cDay).append("-")
         		.append(cYear).append(" "));
-		setContentView(R.layout.calendar);
+		 
 	}
 	
 	
@@ -319,6 +336,9 @@ public class calendarActivity extends Activity {
 			            }
 			        },
 			        null);				// no handler
+		
+		
+		// onProgressUpdate
 	} 
 		
 	
@@ -425,12 +445,14 @@ public class calendarActivity extends Activity {
     		Log.d(TAG, "calendar title: " + calendarNames[i]);
     		
     		if (calendarNames[i].equals(CALENDAR_NAME)) {
-    			Log.d(TAG, "MoldHold Calendar found!!");
+    			Log.d(TAG, "MoldHold Calendar found!!"); 
     			found = true;
     		}
     	}
     	if (found == false)
     		Log.d(TAG, "MoldHold Calendar not found!!");
+    	
+    	Log.d(TAG, "returning from checkCalexists");
     	return found;
 	}
 	
@@ -449,7 +471,7 @@ public class calendarActivity extends Activity {
           CalendarEntry newCalendar = client.executeInsertCalendar(calendar, url);
           
           // get calendar id and add to preferences
-          String calendarID = newCalendar.id.substring(
+          calendarID = newCalendar.id.substring(
         		  newCalendar.id.lastIndexOf('/') + 1); 
           SharedPreferences.Editor editor = settings.edit();
   		  editor.putString("CALENDAR_ID", calendarID);
@@ -494,9 +516,13 @@ public class calendarActivity extends Activity {
         // get the current date
         final Calendar c = Calendar.getInstance();
         
+        Log.d(TAG, "in setAlarmDate");
+        
         //Add the shelf life to the current date (minus 3 for early alarm)
         // to calculate the expiration date alarm.
-        c.add(Calendar.DAY_OF_MONTH, (shelfLife-3));
+        int i = shelfLife.intValue();
+        
+        c.add(Calendar.DAY_OF_MONTH, (i- 3));
         cYear = c.get(Calendar.YEAR);
         cMonth = c.get(Calendar.MONTH);
         cDay = c.get(Calendar.DAY_OF_MONTH);
@@ -524,15 +550,15 @@ public class calendarActivity extends Activity {
 
                 public void onDateSet(DatePicker view, int year, 
                                       int monthOfYear, int dayOfMonth) {
-                    //cYear = year;
-                    //cMonth = monthOfYear;
-                    //cDay = dayOfMonth;
-                    // set event??
-    				// add event using date
+                    cYear = year;
+                    cMonth = monthOfYear;
+                    cDay = dayOfMonth;
                 	
     				EventEntry event = newEvent();
     				addNewEvent(event);
-    				// toast to say alarm has been added
+    				
+                	Intent intent = new Intent();
+                	setResult(Activity.RESULT_OK, intent);
                 	finish();
                 }
             };
@@ -543,7 +569,18 @@ public class calendarActivity extends Activity {
     //        
     private void addNewEvent(EventEntry event) {
     	// need: https://www.google.com/calendar/feeds/<calID>/owncalendars/full
-    	CalendarUrl url = CalendarUrl.forEventFeed(calendarID, "private", "full");
+    	//String calUrl = "https://www.google.com/calendar/feeds/default/calendars/"
+    	//		+ calendarID;
+    	//	CalendarUrl url = new CalendarUrl(calUrl);
+    	//String tail = "full/" + calendarID;
+    	CalendarUrl url = CalendarUrl.forEventFeed("default", "private", "full");
+    	
+    	
+    	//CalendarEntry moldCal = new CalendarEntry();
+    	//moldCal.title = CALENDAR_NAME;
+    	//moldCal.id = calendarID;
+    	//CalendarUrl url = new CalendarUrl(moldCal.getEventFeedLink());
+    	
         try {
 			EventEntry result = client.executeInsertEvent(event, url);
 			// do anything with result??
@@ -551,6 +588,8 @@ public class calendarActivity extends Activity {
 		} catch (IOException e) {
 			handleException(e);
 		}
+		// toast to say alarm has been added
+		makeToast();
     }
     
     
@@ -561,16 +600,31 @@ public class calendarActivity extends Activity {
         event.title = "Your " + productName + " expires in 3 days";
         When when = new When();
         Calendar c = Calendar.getInstance();
-        c.set(cYear, cMonth, cDay, 12, 15);
+        c.set(cYear, cMonth, cDay, 5, 15);
         when.startTime = new DateTime(c.getTime());	// convert Calendar to Date
         //c.add(Calendar.HOUR_OF_DAY, 1);	// add hour to make finish time
         when.endTime = new DateTime(c.getTime());
         // alarm will always go off at noon...
         // add alarm
         Reminder reminder = new Reminder();
+        //reminder.days = 0;
+        //reminder.hours = 0;
         reminder.minutes = MIN_BEFORE;	// # min b4 start time reminder is to go off
+        reminder.method = "alert";
         when.reminder = reminder;
         event.when = when;
         return event;
-      }
+    }
+    
+    
+    
+    // Toast pop-up message to tell user that alarm was successfully
+    // added to calendar.
+    private void makeToast() {
+		Toast msg = Toast.makeText(calendarActivity.this, "Alarm Added!", 
+				Toast.LENGTH_LONG);
+		msg.setGravity(Gravity.CENTER, msg.getXOffset() / 2, 
+				msg.getYOffset() / 2);
+		msg.show();
+    }
 }

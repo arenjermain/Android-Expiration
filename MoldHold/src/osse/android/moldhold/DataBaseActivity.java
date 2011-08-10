@@ -5,15 +5,170 @@ Please see COPYING file in the distribution for license terms.
 */
 
 package osse.android.moldhold;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+
 import android.app.Activity;
+import android.content.ContentValues;
+import android.content.Context;
+import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
+import android.database.sqlite.SQLiteOpenHelper;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 
-public class DataBaseActivity extends Activity {
-	public EditText textedit;
-	public DatePicker datepick;
+public class DataBaseActivity extends Activity implements OnClickListener {
+	public EditText 		textedit;
+	public DatePicker 		datepick;
+	private String 			scanResults;
+	private DataBaseHelper 	dbh;
+	private int 			day; //to get day from user datePicker1
+	private int 			month; //to get month from user datePicker1
+	private int 			year;  //to get year
+	private String 			description; 
+	private long 			shelflife; //the absolute shelf life of the product
+	private SQLiteDatabase data = null;
+	private Button 			btnOk;
+	private Button 			btnCancel;
 	
-	void onCreate(){
+	private static final String 	TAG = "DBActivity";
+	
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
 		
+		datepick = new DatePicker(DataBaseActivity.this);
+		
+		// get extras
+		Bundle extras = getIntent().getExtras();
+		if (extras != null) {
+			scanResults = extras.getString("SCAN_RESULT");
+			
+		}
+	
+		dbh = new DataBaseHelper(DataBaseActivity.this);
+		Log.d(TAG, "getting writable database...");
+		data = dbh.getWritableDatabase(); // opens or creates database
+		String my_query = "SELECT * FROM " + DataBaseHelper.productTable + 
+		" WHERE " + DataBaseHelper.colID + "=?"; 
+	    String[] args = {scanResults};
+	    Cursor search = data.rawQuery(my_query, args); // the query of our database
+	    
+	    if (search.moveToFirst() == true){
+	    	int descripInt = search.getColumnIndex("Description");
+	    	int exprInt = search.getColumnIndex("Expiration");
+	    	
+	    	if ((descripInt == -1) || (exprInt == -1)) {
+	    		// figure this out because -1 means column don't exist
+	    	} else {
+	    		description = search.getString(descripInt);
+	    		shelflife = search.getInt(exprInt);
+	    	}
+	    	data.close();
+	    	wereDone(); //to finish activity
+	    }
+	    else {
+	    	setContentView(R.layout.data_popup);
+	    	
+	    	textedit = (EditText) findViewById(R.id.editText1);
+	    	datepick = (DatePicker) findViewById(R.id.datePicker1);
+	    	
+	    	btnOk = (Button) findViewById(R.id.button2);
+	    	btnCancel = (Button) findViewById(R.id.btnCancel);
+	    	
+	    	btnOk.setOnClickListener(DataBaseActivity.this);
+	    	btnCancel.setOnClickListener(DataBaseActivity.this);
+	    }
+	
 	}
+
+
+	// Adapted from Vogella.org database tutorial
+	public class DataBaseHelper extends SQLiteOpenHelper {
+		static final String dbname = "MoldHoldDB";
+		static final String productTable = "Products";
+		static final String colID = "UpcID";
+		static final String colDescription = "Description";
+		static final String colExpiration = "Expiration";
+		
+		public DataBaseHelper(Context context) {
+			super(context, dbname, null, 1);
+		}
+		
+		@Override
+		public void onCreate(SQLiteDatabase db) {
+			db.execSQL("CREATE TABLE " + productTable + " (" + colID + 
+					" INTEGER PRIMARY KEY , " + colDescription + " TEXT , " +
+					colExpiration + " INTEGER)");
+		}
+		
+		@Override
+		public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+			Log.w(DataBaseHelper.class.getName(),
+					"Upgrading database from version " + oldVersion + " to "
+					+ newVersion + ", which will destroy all old data");
+			db.execSQL("DROP TABLE IF EXISTS todo");
+			onCreate(db);
+		}
+	
+	}
+
+
+
+	@Override
+	public void onClick(View v) {
+		switch (v.getId()) {
+		case R.id.button2:
+			day = datepick.getDayOfMonth();
+			month = datepick.getMonth();
+			year = datepick.getYear();
+			
+			Log.d(TAG, "onCLick year: " + year);
+			description = textedit.getText().toString();
+			Log.d(TAG, "in onclick, description: " + description);
+			Calendar c = Calendar.getInstance();
+			c.set(year, month, day);
+			Date end = c.getTime();
+			//Calendar today = Calendar.getInstance();
+			
+			//Date end = new GregorianCalendar(year, month, day).getTime();
+	    	Date today = new Date();
+	    	
+	    	
+	    	long diff = end.getTime() - today.getTime();
+	    	shelflife = (diff / (1000L*60L*60L*24L));
+	    	Log.d(TAG, "shelflife in onclick: " + shelflife);
+	    	ContentValues newData = new ContentValues();
+	    	newData.put(DataBaseHelper.colDescription, description);
+	    	newData.put(DataBaseHelper.colExpiration, shelflife);
+	    	newData.put(DataBaseHelper.colID, scanResults);
+	    	data.insert(DataBaseHelper.productTable, DataBaseHelper.colID, newData);
+	    	data.close();
+	    	wereDone(); //because we're done
+			break;
+		case R.id.btnCancel:
+			finish();
+			break;
+		}
+		
+	} 
+	
+	public void wereDone(){
+		Intent intent = new Intent();
+		Log.d(TAG, "Shelflife:" + shelflife);
+		Log.d(TAG, "Description:" + description);
+    	intent.putExtra("DESCRIPTION", description);
+    	intent.putExtra("SHELF_LIFE", shelflife);
+    	setResult(Activity.RESULT_OK, intent);
+    	finish();
+	}
+	
 }

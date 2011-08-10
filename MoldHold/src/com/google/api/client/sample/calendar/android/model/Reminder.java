@@ -10,7 +10,16 @@ import com.google.api.client.util.Key;
 
 public class Reminder {
 	
+	//@Key("@days")
+	//public int days;
+	
+	//@Key("@hours")
+	//public int hours;
+	
 	@Key("@minutes")
 	public int minutes;
+	
+	@Key("@method")
+	public String method;
 
 }
