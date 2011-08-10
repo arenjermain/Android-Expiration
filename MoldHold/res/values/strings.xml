@@ -7,4 +7,6 @@
     <string name="ok">Ok</string>
     <string name="Quit">Quit</string>
     <string name="btnCancel">Cancel</string>
+    <string name="instructions">Please enter product name and expiration date below:</string>
+    <string name="ChangeDate">Change the Date</string>
 </resources>

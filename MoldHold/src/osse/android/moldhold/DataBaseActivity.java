@@ -5,9 +5,9 @@ Please see COPYING file in the distribution for license terms.
 */
 
 package osse.android.moldhold;
+
 import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 
 import android.app.Activity;
 import android.content.ContentValues;
@@ -15,7 +15,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Bundle;
 import android.util.Log;
@@ -26,8 +25,8 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 
 public class DataBaseActivity extends Activity implements OnClickListener {
-	public EditText 		textedit;
-	public DatePicker 		datepick;
+	public EditText 		textedit;		// product name
+	public DatePicker 		datepick;		// date of expiration
 	private String 			scanResults;
 	private DataBaseHelper 	dbh;
 	private int 			day; //to get day from user datePicker1
@@ -35,17 +34,16 @@ public class DataBaseActivity extends Activity implements OnClickListener {
 	private int 			year;  //to get year
 	private String 			description; 
 	private long 			shelflife; //the absolute shelf life of the product
-	private SQLiteDatabase data = null;
+	private SQLiteDatabase 	data = null;
 	private Button 			btnOk;
 	private Button 			btnCancel;
 	
-	private static final String 	TAG = "DBActivity";
+	private static final String 	TAG = "DBActivity"; // for Android logging
+	
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
-		datepick = new DatePicker(DataBaseActivity.this);
 		
 		// get extras
 		Bundle extras = getIntent().getExtras();
@@ -54,15 +52,15 @@ public class DataBaseActivity extends Activity implements OnClickListener {
 			
 		}
 	
+		datepick = new DatePicker(DataBaseActivity.this);
 		dbh = new DataBaseHelper(DataBaseActivity.this);
-		Log.d(TAG, "getting writable database...");
-		data = dbh.getWritableDatabase(); // opens or creates database
+		data = dbh.getWritableDatabase(); 		// opens or creates database
 		String my_query = "SELECT * FROM " + DataBaseHelper.productTable + 
-		" WHERE " + DataBaseHelper.colID + "=?"; 
+				" WHERE " + DataBaseHelper.colID + "=?"; 
 	    String[] args = {scanResults};
 	    Cursor search = data.rawQuery(my_query, args); // the query of our database
 	    
-	    if (search.moveToFirst() == true){
+	    if (search.moveToFirst() == true) { // item found in database
 	    	int descripInt = search.getColumnIndex("Description");
 	    	int exprInt = search.getColumnIndex("Expiration");
 	    	
@@ -74,14 +72,13 @@ public class DataBaseActivity extends Activity implements OnClickListener {
 	    	}
 	    	data.close();
 	    	wereDone(); //to finish activity
-	    }
-	    else {
+	    } else {							// item not found in database
 	    	setContentView(R.layout.data_popup);
 	    	
-	    	textedit = (EditText) findViewById(R.id.editText1);
+	    	textedit = (EditText) findViewById(R.id.etProductName);
 	    	datepick = (DatePicker) findViewById(R.id.datePicker1);
 	    	
-	    	btnOk = (Button) findViewById(R.id.button2);
+	    	btnOk = (Button) findViewById(R.id.btnDateOk);
 	    	btnCancel = (Button) findViewById(R.id.btnCancel);
 	    	
 	    	btnOk.setOnClickListener(DataBaseActivity.this);
@@ -90,6 +87,7 @@ public class DataBaseActivity extends Activity implements OnClickListener {
 	
 	}
 
+	
 
 	// Adapted from Vogella.org database tutorial
 	public class DataBaseHelper extends SQLiteOpenHelper {
@@ -126,33 +124,27 @@ public class DataBaseActivity extends Activity implements OnClickListener {
 	@Override
 	public void onClick(View v) {
 		switch (v.getId()) {
-		case R.id.button2:
+		case R.id.btnDateOk:
+			// get date from datepicker
 			day = datepick.getDayOfMonth();
 			month = datepick.getMonth();
 			year = datepick.getYear();
 			
-			Log.d(TAG, "onCLick year: " + year);
 			description = textedit.getText().toString();
-			Log.d(TAG, "in onclick, description: " + description);
-			Calendar c = Calendar.getInstance();
-			c.set(year, month, day);
-			Date end = c.getTime();
-			//Calendar today = Calendar.getInstance();
-			
-			//Date end = new GregorianCalendar(year, month, day).getTime();
-	    	Date today = new Date();
-	    	
-	    	
-	    	long diff = end.getTime() - today.getTime();
+			Calendar c = Calendar.getInstance();// today's date
+			c.set(year, month, day);			// change to user entered date
+			Date end = c.getTime();				// convert Calendar to Date
+	    	Date today = new Date();			// today's date
+	    	long diff = end.getTime() - today.getTime(); 
 	    	shelflife = (diff / (1000L*60L*60L*24L));
-	    	Log.d(TAG, "shelflife in onclick: " + shelflife);
 	    	ContentValues newData = new ContentValues();
+	    	// add info to database
 	    	newData.put(DataBaseHelper.colDescription, description);
 	    	newData.put(DataBaseHelper.colExpiration, shelflife);
 	    	newData.put(DataBaseHelper.colID, scanResults);
 	    	data.insert(DataBaseHelper.productTable, DataBaseHelper.colID, newData);
 	    	data.close();
-	    	wereDone(); //because we're done
+	    	wereDone(); 	//because we're done
 			break;
 		case R.id.btnCancel:
 			finish();
@@ -161,10 +153,12 @@ public class DataBaseActivity extends Activity implements OnClickListener {
 		
 	} 
 	
+	
+	
+	// Saves shelflife and description class variables to extras and returns
+	// to mainActivity.
 	public void wereDone(){
 		Intent intent = new Intent();
-		Log.d(TAG, "Shelflife:" + shelflife);
-		Log.d(TAG, "Description:" + description);
     	intent.putExtra("DESCRIPTION", description);
     	intent.putExtra("SHELF_LIFE", shelflife);
     	setResult(Activity.RESULT_OK, intent);

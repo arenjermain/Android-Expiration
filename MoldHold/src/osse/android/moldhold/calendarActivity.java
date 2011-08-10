@@ -53,13 +53,14 @@ import com.google.api.client.sample.calendar.android.model.When;
 import com.google.api.client.util.DateTime;
 import com.google.common.collect.Lists;
 
+ 
 
-// Existence of MoldHold calendar was verified at application invocation.
+// This activity is started by mainActivity (after DataBaseActivity has
+// completed).
 //
-// This activity is started by database activity. x
-
-
-// credit to HelloDatePickerActivity Example
+//This activity verifies the existence of the MoldHold calendar at the
+//beginning of each invocation. If the MoldHold calendar is not found, then
+//one will be created.
 public class calendarActivity extends Activity {
 	private String		productName = "";
 	private Long		shelfLife;		// in days
@@ -80,11 +81,12 @@ public class calendarActivity extends Activity {
 	private final HttpTransport 		transport = 
 			AndroidHttp.newCompatibleTransport();
 	
-    private static final String 	PREF = "MoldHoldPrefs";
-	private static final String		TAG = "calendarActivity";
+    private static final String 	PREF = "MoldHoldPrefs";   // prefernces name
+	private static final String		TAG = "calendarActivity"; // for Android logging
 	private static final String		CALENDAR_NAME = "MoldHold Expiration Dates";
 	private static final String 	AUTH_TOKEN_TYPE = "cl"; // for calendar
 	private static final int		MIN_BEFORE = 15; 		// for reminder
+	private static final int		DAYS_PRIOR = 3;			// for reminder
 	
 	// intent ids
 	private static final int 		REQUEST_AUTHENTICATE = 0;
@@ -98,12 +100,12 @@ public class calendarActivity extends Activity {
 
 	
 	
-	// 
+	// The following is adapted from calendar-v2-atom-android-sample by
+	// Yaniv Inbar, thanks to Yaniv for making this example available. 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		
 		accountManager = new GoogleAccountManager(this);
 		settings = getSharedPreferences(PREF, MODE_PRIVATE);
 		
@@ -173,11 +175,13 @@ public class calendarActivity extends Activity {
 		Log.d(TAG, "calling executeRefreshCalendars in onCreate()");
 		executeRefreshCalendars();
 		
+		// trying to make main UI thread wait for new authToken to be
+		// obtained before continuing on...
 	/*	if (authToken == null) {
 			setContentView(R.layout.status);	
 			while(authToken == null) {
 				//Log.d(TAG, "main thread yielding...");
-				//Thread.yield();
+				//Thread.yield();	// OOPS, can't do this...
 				;
 			}
 		}*/
@@ -192,7 +196,7 @@ public class calendarActivity extends Activity {
 			
 		if (calendarID == null) {
 			Log.d(TAG, "Shit, calendarID is null... this should never happend...");
-			//finish();
+			//finish(); 		// handle...
 		}
 		
 		
@@ -208,8 +212,6 @@ public class calendarActivity extends Activity {
 				// add event using date
 				EventEntry event = newEvent();
 				addNewEvent(event);
-				// toast to say alarm has been added
-				makeToast();
 				Intent intent = new Intent();
             	setResult(Activity.RESULT_OK, intent);
                 finish();	// return to mainActivity
@@ -221,16 +223,11 @@ public class calendarActivity extends Activity {
 			
 			@Override
 			public void onClick(View v) {
-				Log.d(TAG, "about to call show dialog");
 				showDialog(DATE_DIALOG_ID);
-				
-
-				
-				// finish from here instead of callback??
 			}
 		}); 
 		
-		// get extras
+		// get extras from mainActivity
 		Bundle extras = getIntent().getExtras();
 		if (extras != null) {
 			productName = extras.getString("DESCRIPTION");
@@ -238,7 +235,6 @@ public class calendarActivity extends Activity {
 			
 		}
 		setAlarmDate();
-		
 		dateDisplay.setText(new StringBuilder()
 				.append("Your ").append(productName)
 				.append(" has a shelf life of ").append(shelfLife)
@@ -247,7 +243,6 @@ public class calendarActivity extends Activity {
         		.append(cMonth + 1).append("-")	// Month is 0 based so add 1
         		.append(cDay).append("-")
         		.append(cYear).append(" "));
-		 
 	}
 	
 	
@@ -336,9 +331,6 @@ public class calendarActivity extends Activity {
 			            }
 			        },
 			        null);				// no handler
-		
-		
-		// onProgressUpdate
 	} 
 		
 	
@@ -415,7 +407,6 @@ public class calendarActivity extends Activity {
 	        int numCalendars = calendars.size();
 	        calendarNames = new String[numCalendars];
 	        for (int i = 0; i < numCalendars; i++) {
-	        	
 	        	Log.d(TAG, "EFC: cal name: " + calendars.get(i).title);
 	        	Log.d(TAG, "EFC: cal id: " + calendars.get(i).id);
 	        	
@@ -432,18 +423,13 @@ public class calendarActivity extends Activity {
 	// Check to see if MoldHold calendar exits in list of calendar names 
 	// retrieved from own calendars feed. 
 	private boolean checkCalendarExists() {
-		boolean		found = false;
-		Log.d(TAG, "in checkCalendarExists()");
+		boolean		found = false;	// initialize to false
 		
 		if (calendarNames == null) {
 			Log.d(TAG, "calendarNames is null...");
 			return found;
 		}
-		
     	for (int i = 0; i < calendarNames.length; i++) {
-    		
-    		Log.d(TAG, "calendar title: " + calendarNames[i]);
-    		
     		if (calendarNames[i].equals(CALENDAR_NAME)) {
     			Log.d(TAG, "MoldHold Calendar found!!"); 
     			found = true;
@@ -451,8 +437,6 @@ public class calendarActivity extends Activity {
     	}
     	if (found == false)
     		Log.d(TAG, "MoldHold Calendar not found!!");
-    	
-    	Log.d(TAG, "returning from checkCalexists");
     	return found;
 	}
 	
@@ -466,16 +450,15 @@ public class calendarActivity extends Activity {
         calendar.title = CALENDAR_NAME;
         calendar.summary = "This calendar contains the expiration dates " +
         		"managed by MoldHold";
-        // set author?
         try {
-          CalendarEntry newCalendar = client.executeInsertCalendar(calendar, url);
+        	CalendarEntry newCalendar = client.executeInsertCalendar(calendar, url);
           
-          // get calendar id and add to preferences
-          calendarID = newCalendar.id.substring(
+        	// get calendar id and add to preferences
+        	calendarID = newCalendar.id.substring(
         		  newCalendar.id.lastIndexOf('/') + 1); 
-          SharedPreferences.Editor editor = settings.edit();
-  		  editor.putString("CALENDAR_ID", calendarID);
-  		  editor.commit();
+        	SharedPreferences.Editor editor = settings.edit();
+  		  	editor.putString("CALENDAR_ID", calendarID);
+  		  	editor.commit();
         } catch (IOException e) {
         	handleException(e);
         }
@@ -511,22 +494,20 @@ public class calendarActivity extends Activity {
 
 	
 	
-	//
+	// Calculates the suggested alarm date (3 days prior to expiration date).
 	private void setAlarmDate() {
         // get the current date
         final Calendar c = Calendar.getInstance();
-        
-        Log.d(TAG, "in setAlarmDate");
         
         //Add the shelf life to the current date (minus 3 for early alarm)
         // to calculate the expiration date alarm.
         int i = shelfLife.intValue();
         
-        c.add(Calendar.DAY_OF_MONTH, (i- 3));
+        c.add(Calendar.DAY_OF_MONTH, (i- DAYS_PRIOR));
+        // set class variables
         cYear = c.get(Calendar.YEAR);
         cMonth = c.get(Calendar.MONTH);
         cDay = c.get(Calendar.DAY_OF_MONTH);
-        
 	}
 	
 	
@@ -544,7 +525,7 @@ public class calendarActivity extends Activity {
 	
 	
     
-    // the callback received when the user "sets" the date in the dialog
+    // The callback received when the user "sets" the date in the dialog
     private DatePickerDialog.OnDateSetListener mDateSetListener =
             new DatePickerDialog.OnDateSetListener() {
 
@@ -561,26 +542,14 @@ public class calendarActivity extends Activity {
                 	setResult(Activity.RESULT_OK, intent);
                 	finish();
                 }
-            };
-              
+            };          
        
     
     
-    //        
+    // Adds new event to calendar (want it to add to MoldHold calendar, but
+    // currently only have it working with the user's default/main calendar...
     private void addNewEvent(EventEntry event) {
-    	// need: https://www.google.com/calendar/feeds/<calID>/owncalendars/full
-    	//String calUrl = "https://www.google.com/calendar/feeds/default/calendars/"
-    	//		+ calendarID;
-    	//	CalendarUrl url = new CalendarUrl(calUrl);
-    	//String tail = "full/" + calendarID;
     	CalendarUrl url = CalendarUrl.forEventFeed("default", "private", "full");
-    	
-    	
-    	//CalendarEntry moldCal = new CalendarEntry();
-    	//moldCal.title = CALENDAR_NAME;
-    	//moldCal.id = calendarID;
-    	//CalendarUrl url = new CalendarUrl(moldCal.getEventFeedLink());
-    	
         try {
 			EventEntry result = client.executeInsertEvent(event, url);
 			// do anything with result??
@@ -594,7 +563,7 @@ public class calendarActivity extends Activity {
     
     
     
-    // @param calDate should have both date and time
+    // Creates a new calendar event with a title, date, time, and reminder.
     private EventEntry newEvent() {
         EventEntry event = new EventEntry();
         event.title = "Your " + productName + " expires in 3 days";
@@ -602,13 +571,10 @@ public class calendarActivity extends Activity {
         Calendar c = Calendar.getInstance();
         c.set(cYear, cMonth, cDay, 5, 15);
         when.startTime = new DateTime(c.getTime());	// convert Calendar to Date
-        //c.add(Calendar.HOUR_OF_DAY, 1);	// add hour to make finish time
         when.endTime = new DateTime(c.getTime());
         // alarm will always go off at noon...
         // add alarm
         Reminder reminder = new Reminder();
-        //reminder.days = 0;
-        //reminder.hours = 0;
         reminder.minutes = MIN_BEFORE;	// # min b4 start time reminder is to go off
         reminder.method = "alert";
         when.reminder = reminder;
@@ -622,7 +588,7 @@ public class calendarActivity extends Activity {
     // added to calendar.
     private void makeToast() {
 		Toast msg = Toast.makeText(calendarActivity.this, "Alarm Added!", 
-				Toast.LENGTH_LONG);
+				Toast.LENGTH_SHORT);
 		msg.setGravity(Gravity.CENTER, msg.getXOffset() / 2, 
 				msg.getYOffset() / 2);
 		msg.show();

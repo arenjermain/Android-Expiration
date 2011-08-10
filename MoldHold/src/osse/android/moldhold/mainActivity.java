@@ -6,28 +6,17 @@ Please see COPYING file in the distribution for license terms.
 
 package osse.android.moldhold;
 
-import java.util.Date;
-import java.util.GregorianCalendar;
-
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.ContentValues;
-import android.content.Context;
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteException;
-import android.database.sqlite.SQLiteOpenHelper;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
-import android.os.Debug;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
-import android.widget.DatePicker;
-import android.widget.EditText;
 
 
 // Clicking the "scan" button invokes the zxing application. 
@@ -37,12 +26,16 @@ import android.widget.EditText;
 //		"GSESSION_ID"
 //		"ACCOUNT_NAME"
 //		"CALENDAR_ID"
+//		"ACCEPTED"
 //
 public class mainActivity extends Activity implements OnClickListener {
-	private static final String 	TAG = "MoldHold";
+	private static final String 	TAG = "MoldHold"; // for Android logging
+	private static final String 	PREF = "MoldHoldPrefs"; // preferences name
+	private SharedPreferences 		settings;
 	private static final int		REQUEST_ZXING = 0;
 	private static final int		REQUEST_CALENDAR = 1;
 	private static final int		REQUEST_DB = 2;
+	private static final int		DISCLAIM_DIALOG = 3;
 	
 
 	private Button			btnScan;
@@ -55,29 +48,17 @@ public class mainActivity extends Activity implements OnClickListener {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
+		// Check whether the user has already accepted the disclaimer.
+		// The user will only be prompted to agree to the disclaimer the first 
+		// time they run the application.
+		settings = getSharedPreferences(PREF, MODE_PRIVATE);
+		boolean accepted = settings.getBoolean("ACCEPTED", false);
 		
-		// Verify login info is stored in preferences (if not add) and
-		// check that calendar exists (if not create)
-	/*	
-        Long sl = (long) 10;
-    	Intent calIntent = new Intent(this, calendarActivity.class);
-    	calIntent.putExtra("DESCRIPTION", "milk"); // CHANGE BACK - description
-    	calIntent.putExtra("SHELF_LIFE", sl);  		// CHANGE BACK - shelflife
-    	startActivityForResult(calIntent, REQUEST_CALENDAR); */
+		if(!accepted)
+			showDialog(DISCLAIM_DIALOG);
  
-		setContentView(R.layout.main);
-		
-		// connect buttons to xml file and set listeners
-		btnScan = (Button) findViewById(R.id.btnScan);
-		btnUpdate = (Button) findViewById(R.id.btnUpdate);
-		btnQuit = (Button) findViewById(R.id.btnQuit);
-		
-		btnQuit.setOnClickListener(this);
-		btnScan.setOnClickListener(this);
-		btnUpdate.setOnClickListener(this);
-
-		
-
+		setMainMenu();
 	}
 	
 	
@@ -87,6 +68,7 @@ public class mainActivity extends Activity implements OnClickListener {
 	public void onClick(View v) {
 		switch(v.getId()) {
 			case R.id.btnScan:	// invoke zxing scanner application
+				setContentView(R.layout.processing);
 				Intent intent = new Intent("com.google.zxing.client.android.SCAN");
 				intent.setPackage("com.google.zxing.client.android");
 				intent.putExtra("SCAN_MODE", "PRODUCT_MODE");
@@ -100,11 +82,25 @@ public class mainActivity extends Activity implements OnClickListener {
 		}
     }
 
+	
+	
+	// Set's the main screen and connects buttons.
+	public void setMainMenu() {
+		setContentView(R.layout.main);
+		
+		// connect buttons to xml file and set listeners
+		btnScan = (Button) findViewById(R.id.btnScan);
+		btnUpdate = (Button) findViewById(R.id.btnUpdate);
+		btnQuit = (Button) findViewById(R.id.btnQuit);
+		
+		btnQuit.setOnClickListener(this);
+		btnScan.setOnClickListener(this);
+		btnUpdate.setOnClickListener(this);
+	}
 
 	
-	// make popupwindow into alert dialog with inflator then you can get content
-	// via onclicklistener setting private member data set inside the main 
-	// activity
+	// This method can be invoked by return from Zxing, DataBaseActivity, or
+	// calendarActivity.
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent intent) {
 		// call super??
@@ -113,20 +109,20 @@ public class mainActivity extends Activity implements OnClickListener {
 	    try {
 		    if (requestCode == REQUEST_ZXING) {
 		        if (resultCode == RESULT_OK) {	// handle successful scan
-		        	
+		        	setContentView(R.layout.processing);
 		        	ScanResults = intent.getStringExtra("SCAN_RESULT");
 		        	
 		        	Intent dbIntent = new Intent(this, DataBaseActivity.class);
 		        	dbIntent.putExtra("SCAN_RESULT", ScanResults);   	
-	            	startActivityForResult(dbIntent, REQUEST_DB);
-		        	
-	            	
+	            	startActivityForResult(dbIntent, REQUEST_DB);	
 		        } else if (resultCode == RESULT_CANCELED) {
 		            // Handle cancel...
+		        	setMainMenu();
 		        	Log.d(TAG, "zxing result cancelled...");
 		        }
 		    } else if (requestCode == REQUEST_DB) {
 		    	if (resultCode == RESULT_OK) {
+		    		setContentView(R.layout.processing);
 		    		String description = intent.getStringExtra("DESCRIPTION");
 		    		Long shelflife = intent.getLongExtra("SHELF_LIFE", -1);
 		    		
@@ -135,21 +131,62 @@ public class mainActivity extends Activity implements OnClickListener {
 	            	calIntent.putExtra("SHELF_LIFE", shelflife);  	
 	            	startActivityForResult(calIntent, REQUEST_CALENDAR);
 		    	} else if (resultCode == RESULT_CANCELED) {
-		            // Handle cancel...
-		        	Log.d(TAG, "zxing result cancelled...");
+		    		setMainMenu();
 		        }
 		    } else if (requestCode == REQUEST_CALENDAR) {
 		         if (resultCode == RESULT_OK) {	
 		        	 Log.d(TAG, "calActivity result OK");
+		        	 setMainMenu();
 		         } else if (resultCode == RESULT_CANCELED) {
-		        	 // Handle cancel...
-		        	 Log.d(TAG, "calActivity result cancelled");
+		        	 setMainMenu();
 		         }
-		    }
-		    
+		    } 
 	    } catch (Exception e) {
 	    	Log.i("MOLDHOLD", "Caught exception", e);
 	    }
+	}
+	
+	
+	
+    // Dialog display. Uses switch statement to see which dialog was called.
+	// Displays disclaimer to user, if they select "Agree" the application will  
+	// continue, otherwise if they select "Disagree" the application will close.  
+	@Override
+	protected Dialog onCreateDialog(int id) {
+		switch (id) {
+		case DISCLAIM_DIALOG:  //Dialog to display disclaimer before the application can run
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		    builder.setMessage("LEGAL DISCLAIMER: \n" +
+		    	"The MoldHold application is strictly for fun and convenience. " +
+		    	"The creators of MoldHold are not responsible for any health " +
+		   		"problems resulting from expired food. As the user, you are responsible for " +
+		   		"setting an accurate expiration date for your grocery item. \n" +
+		   		"In addition to the above agreement, this application will require " +
+		   		"access to your Google Calendar account. It will simply create a calendar" +
+	    		" for your food expiration dates and will not change any of the existing calendars." +
+	    		" By agreeing to this disclaimer you are allowing access to your calendars" +
+	    		" and waiving the right to sue for health problems due to expired food." )
+		           .setCancelable(false)
+		           .setPositiveButton("Agree", new DialogInterface.OnClickListener() {
+		               public void onClick(DialogInterface dialog, int id) {
+		                   //if the user agrees, set preferences to true and don't check again
+		                   SharedPreferences.Editor editor = settings.edit();
+		                   editor.putBoolean("ACCEPTED", true);
+		                   // Commit the changes made to preferences
+		                   editor.commit();                    
+		               }
+		           })
+		           .setNegativeButton("Disagree", new DialogInterface.OnClickListener() {
+		        	   public void onClick(DialogInterface dialog, int id) {
+		        		   // if user does not agree to disclaimer, application
+		        		   // will terminate
+		                   finish();
+		                 }
+		           });
+		    AlertDialog alert = builder.create();
+		    return alert;
+		}
+		return null;
 	}
 }
 

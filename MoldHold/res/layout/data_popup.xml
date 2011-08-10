@@ -4,17 +4,19 @@
 		android:orientation="vertical"
 		android:layout_width="match_parent"
 		android:layout_height="match_parent">
+    <TextView android:layout_height="wrap_content" android:id="@+id/tvInstructions" android:layout_width="fill_parent" android:text="@string/instructions" android:textSize="20dp" android:paddingBottom="20dp" android:paddingLeft="10dp" android:gravity="center" android:paddingTop="20dp"></TextView>
 		<EditText
-				android:id="@+id/editText1"
 				android:layout_width="match_parent"
-				android:layout_height="wrap_content">
+				android:layout_height="wrap_content" android:hint="Enter Product Name Here" android:id="@+id/etProductName" android:layout_marginLeft="10dp" android:layout_marginRight="10dp">
 				<requestFocus></requestFocus>
 		</EditText>
 		<DatePicker
 				android:id="@+id/datePicker1"
 				android:layout_width="wrap_content"
-				android:layout_height="wrap_content" android:layout_gravity="center"></DatePicker>
-		<Button android:id="@+id/button2" android:layout_height="wrap_content" android:layout_width="match_parent" android:text="@string/ok"></Button>
-		<Button android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/btnCancel" android:id="@+id/btnCancel"></Button>
+				android:layout_height="wrap_content" android:layout_gravity="center" android:layout_marginTop="10dp" android:layout_marginBottom="10dp"></DatePicker>
+		<LinearLayout android:layout_height="wrap_content" android:layout_width="match_parent" android:id="@+id/linearLayout1" android:paddingLeft="10dp" android:paddingRight="10dp">
+			<Button android:layout_height="wrap_content" android:layout_width="match_parent" android:text="@string/ok" android:layout_weight="1" android:id="@+id/btnDateOk" android:textSize="20dp" android:typeface="monospace" android:textStyle="bold"></Button>
+			<Button android:layout_height="wrap_content" android:layout_width="match_parent" android:id="@+id/btnCancel" android:text="@string/btnCancel" android:layout_weight="1" android:textSize="20dp" android:typeface="monospace" android:textStyle="bold"></Button>
+		</LinearLayout>
 
 </LinearLayout>
