@@ -8,6 +8,7 @@ package osse.android.moldhold;
 
 import java.io.IOException;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import android.accounts.Account;
@@ -565,11 +566,18 @@ public class calendarActivity extends Activity {
     
     // Creates a new calendar event with a title, date, time, and reminder.
     private EventEntry newEvent() {
-        EventEntry event = new EventEntry();
-        event.title = "Your " + productName + " expires in 3 days";
-        When when = new When();
+    	// calculate the number of days prior to expiration the alarm is
+    	// being set (i.e. generate value for "numDays" used below).
         Calendar c = Calendar.getInstance();
         c.set(cYear, cMonth, cDay, 5, 15);
+		Calendar exprDate = Calendar.getInstance();
+		exprDate.add(Calendar.DAY_OF_YEAR, shelfLife.intValue());
+    	long diff = exprDate.getTime().getTime() - c.getTime().getTime(); 
+    	long numDays = (diff / (1000L*60L*60L*24L));
+    	
+        EventEntry event = new EventEntry();
+        event.title = "Your " + productName + " expires in " + numDays + " days";
+        When when = new When();
         when.startTime = new DateTime(c.getTime());	// convert Calendar to Date
         when.endTime = new DateTime(c.getTime());
         // alarm will always go off at noon...
